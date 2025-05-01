@@ -1,0 +1,427 @@
+{%extends 'user/base.html'%}
+{%load static%}
+{%block body_block%}
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+        <!-- Hero Start -->
+
+        <div class="container">
+        </div>
+        <div class="container-fluid py-5 mb-5 hero-headers">
+            <div class="container py-5 ">
+                <div class="row g-5 align-items-center">
+                    <div class="col-md-12 col-lg-7">
+                        <h4 class="mb-3 text-dark animated-text">100% Organic Spices</h4>
+                        <h1 class="mb-5 display-3 text-dark highlight-text">Buy and Sell Here...</h1>
+                        <p class="mb-4 text-dark">Welcome to our spice auction platform, where the finest spices meet the most passionate bidders. Join us in a vibrant marketplace where every bid is a step towards culinary excellence. Explore, bid, and savor the flavors of the world.</p>
+                    </div>
+                    <div class="col-md-12 col-lg-5" style="margin-top: 150px;">
+                        <div id="carouselId" class="carousel slide position-relative" data-bs-ride="carousel">
+                            <div class="carousel-inner" role="listbox">
+                                <div class="carousel-item active rounded">
+                                    <img src="{% static 'img/hero-img-3.jpg' %}" class="img-fluid w-100 h-100 bg-secondary rounded zoom-effect" alt="First slide">
+                                    <a href="#" ></a>
+                                </div>
+                                <div class="carousel-item rounded">
+                                    <img src="{% static 'img/hero-img-4.jpg' %}" class="img-fluid w-100 h-100 rounded zoom-effect" alt="Second slide">
+                                    <a href="#" ></a>
+                                </div>
+                            </div>
+                            <button class="carousel-control-prev" type="button" data-bs-target="#carouselId" data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Previous</span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#carouselId" data-bs-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Next</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Hero End -->
+
+        <div class="container">
+            <article>
+                <marquee behavior="scroll" direction="left" class="enhanced-marquee">Todays highest bid is done by {{ highestbid.bidder.name }} on spice {{ highestbid.auction.spice.name }} on {{ highestbid.timestamp }} and the amount is {{ highestbid.amount }}..... || Todays time is {{time}} ||</marquee>
+            </article>
+        </div>
+       
+        <div class="container-fluid fruite py-5">
+            <div class="container py-5">
+                <div class="tab-class text-center">
+                    <div class="row g-4">
+                        <div class="col-lg-4 text-start mb-4">
+                            <h1 class="fade-in-text">Spices List</h1>
+                        </div>
+                    </div>
+                    
+                    <div class="tab-content">
+                        <div id="tab-1" class="tab-pane fade show p-0 active">
+                            <div class="row g-4">
+                              
+                                <div class="col-lg-12">
+                                    <div class="row g-5">
+                                        {%for a in auctions%} 
+                                            <div class="col-md-6 col-lg-4 col-xl-3">
+                                                <div class="rounded position-relative fruite-item border p-3 hover-card">
+                                                    <div class="fruite-img">
+                                                        <img src="{{a.spice.image.url}}" alt="" width="200px" height="170px" style="border-radius: 10px;" class="spice-image">
+                                                    </div>
+                                                    <div class="p-3">
+                                                        <h4>{{a.spice.name}}</h4>
+                                                        <p>{{a.spice.description}}</p>
+                                                        <div class="d-flex justify-content-between flex-lg-wrap">
+                                                            <p class="text-dark fs-6 fw-bold mb-2 ms-5">${{a.starting_bid}} / {{a.spice.stock_quantity}}kg</p>
+                                                            <p class="text-dark fs-6 fw-bold mb-2">Ends at: {{a.end_time}}</p>
+                                                            <a href="{%url 'place_bid' a.id%}" class="btn border border-dark rounded-pill px-3 py-1 text-dark ms-3 bid-button" id="show-form-btn"><i class="fa fa-shopping-bag me-2"></i> Place Bid</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>      
+            </div>
+        </div>   
+        
+        <!-- Floating Spice Elements -->
+        <div class="spice-floater spice-1"></div>
+        <div class="spice-floater spice-2"></div>
+        <div class="spice-floater spice-3"></div>
+        <div class="spice-floater spice-4"></div>
+        <div class="spice-floater spice-5"></div>
+        
+        <style>
+            /* Enhanced Background */
+            .hero-headers {
+                background: linear-gradient(135deg, #f9f0e1 0%, #e0c097 100%);
+                position: relative;
+                overflow: hidden;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            }
+            
+            /* Animated background pattern */
+            .hero-headers::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-image: 
+                    radial-gradient(circle at 25% 25%, rgba(255,255,255,0.2) 0%, transparent 10%),
+                    radial-gradient(circle at 75% 75%, rgba(255,255,255,0.2) 0%, transparent 10%),
+                    radial-gradient(circle at 50% 50%, rgba(255,255,255,0.2) 0%, transparent 10%);
+                background-size: 50px 50px;
+                animation: backgroundMove 30s infinite linear;
+                opacity: 0.5;
+            }
+            
+            @keyframes backgroundMove {
+                0% { background-position: 0 0; }
+                100% { background-position: 100px 100px; }
+            }
+            
+            /* Animated text effects */
+            .animated-text {
+                display: inline-block;
+                position: relative;
+                color: #442913;
+                font-weight: 600;
+                animation: colorShift 4s infinite alternate;
+            }
+            
+            @keyframes colorShift {
+                0% { color: #442913; }
+                50% { color: #a05c17; }
+                100% { color: #442913; }
+            }
+            
+            .highlight-text {
+                position: relative;
+                display: inline-block;
+                font-weight: 700;
+                color: #2d1d0e;
+                text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            }
+            
+            .highlight-text::after {
+                content: '';
+                position: absolute;
+                width: 100%;
+                height: 5px;
+                bottom: 0;
+                left: 0;
+                background-color: rgba(160, 92, 23, 0.5);
+                transform: scaleX(0);
+                transform-origin: bottom right;
+                transition: transform 0.5s ease-out;
+                animation: highlightBar 6s infinite;
+            }
+            
+            @keyframes highlightBar {
+                0% { transform: scaleX(0); transform-origin: bottom right; }
+                50% { transform: scaleX(1); transform-origin: bottom left; }
+                100% { transform: scaleX(0); transform-origin: bottom right; }
+            }
+            
+            /* Pulse animation for button */
+            .pulse-btn {
+                animation: pulse 2s infinite;
+                background-color: #c17a21 !important;
+                border-color: #8a5517 !important;
+                transition: all 0.3s ease;
+            }
+            
+            .pulse-btn:hover {
+                animation: none;
+                background-color: #8a5517 !important;
+                transform: scale(1.05);
+            }
+            
+            @keyframes pulse {
+                0% { box-shadow: 0 0 0 0 rgba(193, 122, 33, 0.7); }
+                70% { box-shadow: 0 0 0 10px rgba(193, 122, 33, 0); }
+                100% { box-shadow: 0 0 0 0 rgba(193, 122, 33, 0); }
+            }
+            
+            /* Enhanced marquee */
+            .enhanced-marquee {
+                color: #8a5517;
+                font-weight: 600;
+                background-color: rgba(249, 240, 225, 0.7);
+                padding: 10px;
+                border-radius: 8px;
+                border-left: 4px solid #c17a21;
+                border-right: 4px solid #c17a21;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            }
+            
+            /* Fade-in text animation */
+            .fade-in-text {
+                position: relative;
+                color: #442913;
+                animation: fadeIn 1.5s ease-in-out;
+                border-bottom: 3px solid #c17a21;
+                display: inline-block;
+                padding-bottom: 5px;
+            }
+            
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(20px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+            
+            /* Card hover effects */
+            .hover-card {
+                transition: all 0.3s ease;
+                border: 1px solid #e6c9a8;
+                background-color: #fff;
+                overflow: hidden;
+            }
+            
+            .hover-card:hover {
+                transform: translateY(-10px);
+                box-shadow: 0 10px 20px rgba(193, 122, 33, 0.2);
+                border-color: #c17a21;
+            }
+            
+            /* Spice image effects */
+            .spice-image {
+                transition: all 0.5s ease;
+                object-fit: cover;
+            }
+            
+            .hover-card:hover .spice-image {
+                transform: scale(1.08);
+            }
+            
+            /* Bid button animation */
+            .bid-button {
+                position: relative;
+                overflow: hidden;
+                transition: all 0.3s ease;
+                z-index: 1;
+            }
+            
+            .bid-button::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(193, 122, 33, 0.2), transparent);
+                transition: all 0.5s ease;
+                z-index: -1;
+            }
+            
+            .bid-button:hover::before {
+                left: 100%;
+                animation: shine 1.5s infinite;
+            }
+            
+            @keyframes shine {
+                0% { left: -100%; }
+                100% { left: 100%; }
+            }
+            
+            .bid-button:hover {
+                background-color: #c17a21;
+                color: white !important;
+                border-color: #8a5517;
+            }
+            
+            /* Zoom effect for carousel images */
+            .zoom-effect {
+                transition: transform 10s ease;
+                transform-origin: center;
+            }
+            
+            .carousel-item.active .zoom-effect {
+                animation: slowZoom 15s infinite alternate;
+            }
+            
+            @keyframes slowZoom {
+                0% { transform: scale(1); }
+                100% { transform: scale(1.1); }
+            }
+            
+            /* Floating spice elements */
+            .spice-floater {
+                position: fixed;
+                width: 30px;
+                height: 30px;
+                background-size: contain;
+                background-repeat: no-repeat;
+                background-position: center;
+                opacity: 0.3;
+                z-index: -1;
+                pointer-events: none;
+            }
+            
+            .spice-1 {
+                top: 10%;
+                left: 5%;
+                background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="%23c17a21"/></svg>');
+                animation: float1 15s infinite linear;
+            }
+            
+            .spice-2 {
+                top: 20%;
+                right: 10%;
+                background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><polygon points="50,10 90,90 10,90" fill="%23a05c17"/></svg>');
+                animation: float2 18s infinite linear;
+            }
+            
+            .spice-3 {
+                bottom: 15%;
+                left: 15%;
+                background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect x="20" y="20" width="60" height="60" fill="%238a5517"/></svg>');
+                animation: float3 20s infinite linear;
+            }
+            
+            .spice-4 {
+                bottom: 25%;
+                right: 20%;
+                background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="30" stroke="%23442913" stroke-width="5" fill="none"/></svg>');
+                animation: float4 25s infinite linear;
+            }
+            
+            .spice-5 {
+                top: 50%;
+                left: 50%;
+                background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M20,50 Q50,20 80,50 Q50,80 20,50" fill="%23a05c17"/></svg>');
+                animation: float5 22s infinite linear;
+            }
+            
+            @keyframes float1 {
+                0% { transform: translate(0, 0) rotate(0deg); }
+                50% { transform: translate(100px, 50px) rotate(180deg); }
+                100% { transform: translate(0, 0) rotate(360deg); }
+            }
+            
+            @keyframes float2 {
+                0% { transform: translate(0, 0) rotate(0deg); }
+                50% { transform: translate(-70px, 100px) rotate(-180deg); }
+                100% { transform: translate(0, 0) rotate(-360deg); }
+            }
+            
+            @keyframes float3 {
+                0% { transform: translate(0, 0) rotate(0deg) scale(1); }
+                50% { transform: translate(120px, -80px) rotate(180deg) scale(1.5); }
+                100% { transform: translate(0, 0) rotate(360deg) scale(1); }
+            }
+            
+            @keyframes float4 {
+                0% { transform: translate(0, 0) rotate(0deg) scale(0.8); }
+                50% { transform: translate(-90px, -40px) rotate(-180deg) scale(1.2); }
+                100% { transform: translate(0, 0) rotate(-360deg) scale(0.8); }
+            }
+            
+            @keyframes float5 {
+                0% { transform: translate(0, 0) rotate(0deg) scale(1); }
+                33% { transform: translate(50px, -50px) rotate(120deg) scale(0.7); }
+                66% { transform: translate(-50px, 50px) rotate(240deg) scale(1.3); }
+                100% { transform: translate(0, 0) rotate(360deg) scale(1); }
+            }
+            
+            /* Original marquee styles - adjusted to match new design */
+            article {
+                max-width: auto;
+                margin: 1em auto;
+                overflow: hidden;
+                position: relative;
+                min-height: 2em;
+                border-radius: 8px;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            }
+            
+            .example-left {
+                white-space: nowrap;
+                position: absolute;
+                text-transform: uppercase;
+                animation: mymove 8s linear infinite alternate;
+            }
+            
+            @keyframes mymove {
+                from { left: 0; }
+                to { left: -140px; }
+            }
+            
+            .example-right {
+                white-space: nowrap;
+                position: absolute;
+                top: 2em;
+                opacity: .4;
+                text-transform: uppercase;
+                animation: urmove 8s linear infinite alternate;
+            }
+            
+            @keyframes urmove {
+                from { right: 0; }
+                to { right: -140px; }
+            }
+            
+            .early {
+                animation: fadeIn ease-in 1;
+                animation-fill-mode: forwards;
+                animation-duration: 1s;
+                animation-delay: 1.5s;
+            }
+            
+            @keyframes early {
+                from { opacity: 1; }
+                to { opacity: 0; }
+            }
+        </style>
+
+{%endblock%}

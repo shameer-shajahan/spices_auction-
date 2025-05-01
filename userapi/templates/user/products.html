@@ -1,0 +1,478 @@
+{%extends 'user/base.html'%}
+{%load static%}
+{%block body_block%}
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+        /* Base Styles */
+        html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
+          margin: 0;
+          padding: 0;
+          border: 0;
+          font-size: 100%;
+          font: inherit;
+          vertical-align: baseline;
+          outline: none;
+          -webkit-font-smoothing: antialiased;
+          -webkit-text-size-adjust: 100%;
+          -ms-text-size-adjust: 100%;
+          -webkit-box-sizing: border-box;
+          -moz-box-sizing: border-box;
+          box-sizing: border-box;
+        }
+        
+        html { overflow-y: scroll; }
+        
+        body { 
+          background: linear-gradient(135deg, #f9f0e1 0%, #e0c097 100%);
+          font-family: 'Poppins', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+          font-size: 62.5%;
+          line-height: 1;
+          color: #442913;
+
+          padding-bottom: 55px;
+          position: relative;
+        }
+        
+        /* Background Pattern */
+        body::before {
+          content: "";
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background-image: 
+            radial-gradient(circle at 25% 25%, rgba(255,255,255,0.2) 0%, transparent 10%),
+            radial-gradient(circle at 75% 75%, rgba(255,255,255,0.2) 0%, transparent 10%),
+            radial-gradient(circle at 50% 50%, rgba(255,255,255,0.2) 0%, transparent 10%);
+          background-size: 50px 50px;
+          animation: backgroundMove 30s infinite linear;
+          opacity: 0.5;
+          z-index: -1;
+        }
+        
+        @keyframes backgroundMove {
+          0% { background-position: 0 0; }
+          100% { background-position: 100px 100px; }
+        }
+
+        ::selection { background: #c17a21; color: #fff; }
+        ::-moz-selection { background: #c17a21; color: #fff; }
+        ::-webkit-selection { background: #c17a21; color: #fff; }
+
+        br { display: block; line-height: 1.6em; } 
+
+        article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section { display: block; }
+        ol, ul { list-style: none; }
+
+        input, textarea { 
+          -webkit-font-smoothing: antialiased;
+          -webkit-text-size-adjust: 100%;
+          -ms-text-size-adjust: 100%;
+          -webkit-box-sizing: border-box;
+          -moz-box-sizing: border-box;
+          box-sizing: border-box;
+          outline: none; 
+        }
+
+        blockquote, q { quotes: none; }
+        blockquote:before, blockquote:after, q:before, q:after { content: ''; content: none; }
+        strong, b { font-weight: bold; } 
+
+        table { border-collapse: collapse; border-spacing: 0; }
+        img { border: 0; max-width: 100%; }
+
+        h1 { 
+          font-weight: bold;
+          font-size: 2.5em;
+          line-height: 1.7em;
+          margin-bottom: 20px;
+          text-align: center;
+          color: #442913;
+          position: relative;
+          display: inline-block;
+          animation: fadeIn 1.5s ease-in-out;
+        }
+        
+        h1::after {
+          content: '';
+          position: absolute;
+          width: 60%;
+          height: 3px;
+          bottom: -10px;
+          left: 20%;
+          background-color: #c17a21;
+          transform: scaleX(0);
+          transform-origin: bottom right;
+          transition: transform 0.5s ease-out;
+          animation: highlightBar 6s infinite;
+        }
+        
+        @keyframes highlightBar {
+          0% { transform: scaleX(0); transform-origin: bottom right; }
+          50% { transform: scaleX(1); transform-origin: bottom left; }
+          100% { transform: scaleX(0); transform-origin: bottom right; }
+        }
+        
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+
+        /** page structure **/
+        #wrapper, .form-box {
+          display: block;
+          width: 85%;
+          background: #fff;
+          margin: 0 auto;
+          padding: 25px 30px;
+          -webkit-box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+          box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+          border-radius: 15px;
+          position: relative;
+          overflow: hidden;
+          transition: all 0.3s ease;
+          border: 1px solid rgba(224, 192, 151, 0.3);
+        }
+        
+        #wrapper:hover {
+          box-shadow: 0 15px 40px rgba(193, 122, 33, 0.2);
+        }
+        
+        /* Floating elements */
+        #wrapper::before {
+          content: "";
+          position: absolute;
+          top: -50px;
+          right: -50px;
+          width: 100px;
+          height: 100px;
+          border-radius: 50%;
+          background-color: rgba(224, 192, 151, 0.2);
+          z-index: 0;
+        }
+        
+        #wrapper::after {
+          content: "";
+          position: absolute;
+          bottom: -30px;
+          left: -30px;
+          width: 80px;
+          height: 80px;
+          border-radius: 50%;
+          background-color: rgba(193, 122, 33, 0.15);
+          z-index: 0;
+        }
+
+        /* Table Styles */
+        #keywords {
+          margin: 0 auto;
+          font-size: 1.2em;
+          margin-bottom: 15px;
+          width: 100%;
+          border-collapse: separate;
+          border-spacing: 0;
+          border-radius: 8px;
+          overflow: hidden;
+          box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        #keywords thead {
+          cursor: pointer;
+          background: linear-gradient(135deg, #c17a21 0%, #8a5517 100%);
+          color: white;
+        }
+        
+        #keywords thead tr th { 
+          font-weight: 600;
+          padding: 15px 30px;
+          padding-left: 42px;
+          letter-spacing: 0.5px;
+          font-size: 1.1em;
+          transition: all 0.3s ease;
+          text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+        
+        #keywords thead tr th span { 
+          padding-right: 20px;
+          background-repeat: no-repeat;
+          background-position: 100% 100%;
+          position: relative;
+        }
+        
+        #keywords thead tr th span::after {
+          content: '';
+          position: absolute;
+          width: 0;
+          height: 2px;
+          bottom: -5px;
+          left: 0;
+          background-color: #fff;
+          transition: width 0.3s ease;
+        }
+        
+        #keywords thead tr th:hover span::after {
+          width: 100%;
+        }
+
+        #keywords thead tr th.headerSortUp, #keywords thead tr th.headerSortDown {
+          background: #8a5517;
+        }
+
+        #keywords thead tr th.headerSortUp span {
+          background-image: url('https://i.imgur.com/SP99ZPJ.png');
+        }
+        
+        #keywords thead tr th.headerSortDown span {
+          background-image: url('https://i.imgur.com/RkA9MBo.png');
+        }
+
+        #keywords tbody tr { 
+          color: #442913;
+          transition: all 0.3s ease;
+        }
+        
+        #keywords tbody tr:nth-child(even) {
+          background-color: rgba(224, 192, 151, 0.1);
+        }
+        
+        #keywords tbody tr:hover {
+          background-color: rgba(193, 122, 33, 0.08);
+          transform: translateY(-2px);
+        }
+        
+        #keywords tbody tr td {
+          text-align: center;
+          padding: 18px 10px;
+          font-size: 1.1em;
+          border-bottom: 1px solid rgba(224, 192, 151, 0.3);
+          transition: all 0.3s ease;
+        }
+        
+        #keywords tbody tr:last-child td {
+          border-bottom: none;
+        }
+        
+        #keywords tbody tr td.lalign {
+          text-align: left;
+          font-weight: 500;
+          color: #442913;
+        }
+        
+        /* Image styles */
+        #keywords tbody tr td img {
+          transition: all 0.5s ease;
+          border: 3px solid rgba(224, 192, 151, 0.3);
+          box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        
+        #keywords tbody tr:hover td img {
+          transform: scale(1.05);
+          border-color: #c17a21;
+        }
+        
+        /* Button styles */
+        .btn-outline-primary {
+          color: #c17a21;
+          border: 2px solid #c17a21;
+          background-color: transparent;
+          padding: 8px 15px;
+          border-radius: 50px;
+          font-weight: 600;
+          font-size: 14px;
+          transition: all 0.3s ease;
+          position: relative;
+          overflow: hidden;
+          z-index: 1;
+        }
+        
+        .btn-outline-primary::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(90deg, transparent, rgba(193, 122, 33, 0.2), transparent);
+          transition: all 0.5s ease;
+          z-index: -1;
+        }
+        
+        .btn-outline-primary:hover::before {
+          left: 100%;
+          animation: shine 1.5s infinite;
+        }
+        
+        @keyframes shine {
+          0% { left: -100%; }
+          100% { left: 100%; }
+        }
+        
+        .btn-outline-primary:hover {
+          background-color: #c17a21;
+          color: white;
+          box-shadow: 0 5px 15px rgba(193, 122, 33, 0.3);
+          transform: translateY(-2px);
+        }
+        
+        /* Add spice button animation */
+        h1 .btn-outline-primary {
+          animation: pulse 2s infinite;
+          margin-left: 30px;
+        }
+        
+        h1 .btn-outline-primary:hover {
+          animation: none;
+        }
+        
+        @keyframes pulse {
+          0% { box-shadow: 0 0 0 0 rgba(193, 122, 33, 0.7); }
+          70% { box-shadow: 0 0 0 10px rgba(193, 122, 33, 0); }
+          100% { box-shadow: 0 0 0 0 rgba(193, 122, 33, 0); }
+        }
+        
+        /* Delete button animation */
+        .buttons {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          transition: all 0.3s ease;
+          background-color: rgba(227, 70, 53, 0.1);
+        }
+        
+        .buttons:hover {
+          background-color: rgba(227, 70, 53, 0.2);
+          transform: rotate(15deg);
+        }
+        
+        .buttons i {
+          font-size: 18px;
+          transition: all 0.3s ease;
+        }
+        
+        .buttons:hover i {
+          transform: scale(1.2);
+        }
+        
+        /* Floating spice elements */
+        .spice-floater {
+            position: fixed;
+            width: 30px;
+            height: 30px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            opacity: 0.15;
+            z-index: -1;
+            pointer-events: none;
+        }
+        
+        .spice-1 {
+            top: 10%;
+            left: 5%;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="%23c17a21"/></svg>');
+            animation: float1 15s infinite linear;
+        }
+        
+        .spice-2 {
+            top: 20%;
+            right: 10%;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><polygon points="50,10 90,90 10,90" fill="%23a05c17"/></svg>');
+            animation: float2 18s infinite linear;
+        }
+        
+        .spice-3 {
+            bottom: 15%;
+            left: 15%;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect x="20" y="20" width="60" height="60" fill="%238a5517"/></svg>');
+            animation: float3 20s infinite linear;
+        }
+        
+        @keyframes float1 {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            50% { transform: translate(100px, 50px) rotate(180deg); }
+            100% { transform: translate(0, 0) rotate(360deg); }
+        }
+        
+        @keyframes float2 {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            50% { transform: translate(-70px, 100px) rotate(-180deg); }
+            100% { transform: translate(0, 0) rotate(-360deg); }
+        }
+        
+        @keyframes float3 {
+            0% { transform: translate(0, 0) rotate(0deg) scale(1); }
+            50% { transform: translate(120px, -80px) rotate(180deg) scale(1.5); }
+            100% { transform: translate(0, 0) rotate(360deg) scale(1); }
+        }
+    </style>
+
+    <!-- Floating Spice Elements -->
+    <div class="spice-floater spice-1"></div>
+    <div class="spice-floater spice-2"></div>
+    <div class="spice-floater spice-3"></div>
+
+    <div id="wrapper" style="margin-top: 180px;">
+     <h1>My Products<a href="{%url 'products-add'%}" class="btn btn-outline-primary">Add Spice</a></h1>
+     
+     <table id="keywords" cellspacing="0" cellpadding="0">
+       <thead>
+         <tr>
+           <th><span>Name</span></th>
+           <th><span>Description</span></th>
+           <th><span>Stock Quantity</span></th>
+           <th><span>Created At</span></th>
+           <th><span>Status</span></th>
+           <th><span>Actions</span></th>
+         </tr>
+       </thead>
+       <tbody>
+        {%for s in spices%}
+         <tr>
+            <td>
+                <div>
+                    <img src="{{s.image.url}}" class="avatar avatar-lg me-3 border-radius-lg" width="100px" style="border-radius: 10px;">
+                    <p class="lalign mt-2">{{s.name}}</p>
+                </div>
+            </td>
+            <td>{{s.description}}</td>
+            <td>{{s.stock_quantity}}</td>
+            <td>{{s.created_at}}</td>   
+            <td>{{s.status}}</td>  
+            <td>
+                <a href="{%url 'auction-add' s.id%}" class="btn btn-outline-primary me-4">Add to auction</a>
+                <a href="{%url 'products-remove' s.id%}" class="buttons"><i class="fa-solid fa-trash" style="color: #e34635;"></i></a>
+            </td>
+         </tr>
+         {%endfor%}
+       </tbody>
+     </table>
+    </div> 
+    
+    <script>
+        $(function(){
+            $('#keywords').tablesorter(); 
+            
+            // Add animation to table cells when page loads
+            $('#keywords tbody tr').each(function(index) {
+                $(this).css({
+                    'opacity': '0',
+                    'transform': 'translateY(20px)'
+                });
+                
+                setTimeout(function() {
+                    $('#keywords tbody tr').eq(index).animate({
+                        'opacity': '1',
+                        'transform': 'translateY(0)'
+                    }, 300);
+                }, 100 * (index + 1));
+            });
+        });
+    </script>
+    
+{%endblock%}

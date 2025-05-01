@@ -1,0 +1,373 @@
+{% extends 'user/base.html' %}
+{% load static %}
+{%block body_block%}
+
+<style>
+    :root {
+        --primary: #4F46E5;
+        --primary-hover: #4338CA;
+        --success: #10B981;
+        --light-success: #ECFDF5;
+        --text-dark: #1F2937;
+        --text-muted: #6B7280;
+        --background: #F9FAFB;
+        --card-bg: #FFFFFF;
+        --border-radius: 16px;
+    }
+
+    body {
+        background-color: var(--background);
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    .success-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        padding: 2rem 1rem;
+    }
+
+    .success-card {
+        background-color: var(--card-bg);
+        border-radius: var(--border-radius);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+        width: 100%;
+        max-width: 560px;
+        position: relative;
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .success-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.08);
+    }
+
+    .card-header {
+        padding: 2.5rem 2.5rem 1.5rem;
+        text-align: center;
+        position: relative;
+    }
+
+    .card-body {
+        padding: 0 2.5rem 1rem;
+    }
+
+    .card-footer {
+        padding: 1.5rem 2.5rem 2.5rem;
+        text-align: center;
+    }
+
+    .success-badge {
+        position: absolute;
+        top: 1.5rem;
+        right: 1.5rem;
+        background-color: var(--light-success);
+        color: var(--success);
+        font-weight: 600;
+        font-size: 0.875rem;
+        padding: 0.5rem 1rem;
+        border-radius: 2rem;
+        box-shadow: 0 2px 5px rgba(16, 185, 129, 0.15);
+        animation: fade-in 0.6s ease;
+    }
+
+    .success-icon {
+        width: 88px;
+        height: 88px;
+        background: var(--light-success);
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 0 auto 1.75rem;
+        position: relative;
+        animation: pulse 2s infinite ease-in-out;
+    }
+
+    .success-icon svg {
+        width: 40px;
+        height: 40px;
+        color: var(--success);
+        animation: checkmark 0.8s ease-in-out forwards;
+    }
+
+    .checkmark-circle {
+        stroke-dasharray: 166;
+        stroke-dashoffset: 166;
+        stroke-width: 3;
+        stroke: var(--success);
+        fill: none;
+        animation: stroke 0.8s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+    }
+
+    .checkmark {
+        stroke-dasharray: 48;
+        stroke-dashoffset: 48;
+        stroke-width: 3;
+        stroke: var(--success);
+        fill: none;
+        animation: stroke 0.5s cubic-bezier(0.65, 0, 0.45, 1) 0.4s forwards;
+    }
+
+    .success-title {
+        color: var(--text-dark);
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        animation: fade-up 0.7s ease-out;
+    }
+
+    .success-subtitle {
+        color: var(--text-muted);
+        font-size: 1.125rem;
+        margin-bottom: 0;
+        animation: fade-up 0.7s ease-out 0.1s forwards;
+    }
+
+    .transaction-details {
+        background-color: var(--background);
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin: 1.5rem 0;
+        animation: fade-up 0.7s ease-out 0.2s forwards;
+    }
+
+    .detail-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .detail-row:last-child {
+        border-bottom: none;
+    }
+
+    .detail-label {
+        color: var(--text-muted);
+        font-size: 1rem;
+    }
+
+    .detail-value {
+        color: var(--text-dark);
+        font-size: 1rem;
+        font-weight: 600;
+    }
+
+    .btn-dashboard {
+        background-color: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 1rem 2rem;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-block;
+        text-decoration: none;
+        animation: fade-up 0.7s ease-out 0.3s forwards;
+    }
+
+    .btn-dashboard:hover {
+        background-color: var(--primary-hover);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(79, 70, 229, 0.3);
+    }
+
+    .confetti {
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        opacity: 0;
+    }
+
+    /* Animations */
+    @keyframes pulse {
+        0% {
+            box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
+        }
+        70% {
+            box-shadow: 0 0 0 15px rgba(16, 185, 129, 0);
+        }
+        100% {
+            box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+        }
+    }
+
+    @keyframes checkmark {
+        0% {
+            transform: scale(0);
+        }
+        60% {
+            transform: scale(1.15);
+        }
+        100% {
+            transform: scale(1);
+        }
+    }
+
+    @keyframes stroke {
+        100% {
+            stroke-dashoffset: 0;
+        }
+    }
+
+    @keyframes fade-up {
+        0% {
+            transform: translateY(20px);
+            opacity: 0;
+        }
+        100% {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    @keyframes fade-in {
+        0% {
+            opacity: 0;
+        }
+        100% {
+            opacity: 1;
+        }
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 640px) {
+        .success-card {
+            max-width: 100%;
+        }
+        
+        .card-header, 
+        .card-body, 
+        .card-footer {
+            padding-left: 1.5rem;
+            padding-right: 1.5rem;
+        }
+        
+        .success-title {
+            font-size: 1.75rem;
+        }
+        
+        .success-subtitle {
+            font-size: 1rem;
+        }
+    }
+
+    /* Confetti animations */
+    @keyframes confetti-fall {
+        0% {
+            transform: translateY(0) rotate(0deg);
+            opacity: 0;
+        }
+        10% {
+            opacity: 1;
+        }
+        100% {
+            transform: translateY(100vh) rotate(360deg);
+            opacity: 0;
+        }
+    }
+    
+    @keyframes confetti-spin {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+</style>
+
+<div style="margin-top: 12rem;">
+    <div class="success-container">
+        <div class="success-card" data-aos="fade-up" data-aos-duration="1000">
+            <div class="card-header">
+                <div class="success-badge">Payment Successful</div>
+                <div class="success-icon">
+                    <svg viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg">
+                        <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
+                        <path class="checkmark" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+                    </svg>
+                </div>
+                <h1 class="success-title">Payment Complete!</h1>
+                <p class="success-subtitle">You are now enrolled in <strong></strong></p>
+            </div>
+            
+            <div class="card-body">
+                <div class="transaction-details">
+                    <div class="detail-row">
+                        <span class="detail-label">Transaction ID</span>
+                        <span class="detail-value"></span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Amount Paid</span>
+                        <span class="detail-value">₹</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Date</span>
+                        <span class="detail-value">#</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card-footer">
+                <a href="{% url 'wonbids' %}" class="btn-dashboard">Download Bill</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Create confetti animation
+    function createConfetti() {
+        const colors = ['#4F46E5', '#10B981', '#F59E0B', '#EC4899', '#8B5CF6'];
+        const confettiCount = 150;
+
+        for (let i = 0; i < confettiCount; i++) {
+            const confetti = document.createElement('div');
+            confetti.className = 'confetti';
+            confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            confetti.style.left = Math.random() * 100 + 'vw';
+            confetti.style.top = -10 + 'px';
+            confetti.style.transform = 'rotate(' + Math.random() * 360 + 'deg)';
+
+            // Randomly shape confetti (square, rectangle, or circle)
+            const shape = Math.random();
+            if (shape > 0.66) {
+                confetti.style.width = Math.random() * 8 + 6 + 'px';
+                confetti.style.height = Math.random() * 8 + 6 + 'px';
+            } else if (shape > 0.33) {
+                confetti.style.width = Math.random() * 5 + 5 + 'px';
+                confetti.style.height = Math.random() * 15 + 5 + 'px';
+            } else {
+                confetti.style.width = Math.random() * 8 + 6 + 'px';
+                confetti.style.height = Math.random() * 8 + 6 + 'px';
+                confetti.style.borderRadius = '50%';
+            }
+
+            // Animation properties
+            const duration = Math.random() * 3 + 2;
+            const delay = Math.random() * 1.5;
+
+            confetti.style.animation = `
+                confetti-fall ${duration}s ease-in ${delay}s forwards,
+                confetti-spin ${duration / 2}s linear ${delay}s infinite
+            `;
+
+            document.body.appendChild(confetti);
+
+            // Clean up confetti after animation
+            setTimeout(() => {
+                confetti.remove();
+            }, (duration + delay) * 1000);
+        }
+    }
+
+    // Run the confetti animation when page loads
+    window.addEventListener('load', createConfetti);
+</script>
+{% endblock %}

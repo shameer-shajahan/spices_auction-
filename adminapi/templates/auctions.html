@@ -1,0 +1,79 @@
+{%extends 'base.html'%}
+{%load static%}
+
+{%block body_block%}
+
+<div class="container-fluid py-4">
+    <div class="row">
+      <div class="col-12">
+        <div class="card my-4">
+          <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+            <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
+              <h6 class="text-white text-capitalize ps-3">Auctions</h6>
+            </div>
+          </div>
+          <div class="card-body px-0 pb-2">
+            <div class="table-responsive p-0">
+              <table class="table align-items-center mb-0">
+                <thead>
+                  <tr>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Spice</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Auctioneer</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">starting bid</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">expected bid</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">created at</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">end time</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Status</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Action</th>
+                    <th class="text-secondary opacity-7"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                    <!-- row started -->
+                    {%for a in auctions%}
+                        <tr>
+                            <td>
+                            <div class="d-flex px-2 py-1">
+                                <div class="d-flex flex-column justify-content-center">
+                                    <span class="text-secondary text-xs font-weight-bold me-3">{{a.spice.name}}</span>
+                                </div>
+                            </div>
+                            </td>
+                            <td>
+                                <span class="text-secondary text-xs font-weight-bold">{{a.auctioneer}}</span>
+                            </td>
+                            <td class="align-middle text-center text-sm">
+                            <span class="text-secondary text-xs font-weight-bold"> Rs. {{a.starting_bid}}</span>
+                            </td>
+                            <td class="align-middle text-center text-sm">
+                                <span class="text-secondary text-xs font-weight-bold"> Rs. {{a.expected_bid}}</span>
+                            </td>
+                            <td class="align-middle text-center">
+                                <span class="text-secondary text-xs font-weight-bold">{{a.created_at}}</span>
+                            </td>
+                            <td class="align-middle text-center">
+                                <span class="text-secondary text-xs font-weight-bold">{{a.end_time}}</span>
+                            </td>
+                            <td class="align-middle text-center">
+                                <span class="text-secondary text-xs font-weight-bold">{{a.status}}</span>
+                            </td>
+                            <td class="align-middle text-center">
+                              <a href="{% url 'auction_delete' a.id %}" class="btn btn-link text-danger text-gradient px-3 mb-0">
+                                  <i class="material-icons text-sm me-2">delete</i> Delete
+                              </a>
+                          </td>
+                        </tr>
+                    {%endfor%}
+                  <!-- row ending -->
+
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{%endblock%}
+

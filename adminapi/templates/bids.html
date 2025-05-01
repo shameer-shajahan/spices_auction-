@@ -1,0 +1,70 @@
+{%extends 'base.html'%}
+{%load static%}
+
+{%block body_block%}
+
+<div class="container-fluid py-4">
+    <div class="row">
+      <div class="col-12">
+        <div class="card my-4">
+          <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+            <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
+              <h6 class="text-white text-capitalize ps-3">Bids List</h6>
+            </div>
+          </div>
+          <div class="card-body px-0 pb-2">
+            <div class="table-responsive p-0">
+              <table class="table align-items-center mb-0">
+                <thead>
+                  <tr>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Spice</th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Bidder</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Amount</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">TimeStamp</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Action</th>
+                    <th class="text-secondary opacity-7"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                    <!-- row started -->
+                    {%for bid in bids%}
+                        <tr>
+                            <td>
+                            <div class="d-flex px-2 py-1">
+                                <div>
+                                <img src="{{bid.auction.spice.image.url}}" class="avatar avatar-lg me-3 border-radius-lg">
+                                </div>
+                                <div class="d-flex flex-column justify-content-center">
+                                <h6 class="mb-0 text-sm">{{bid.auction.spice.name}}</h6>
+                                </div>
+                            </div>
+                            </td>
+                            <td>
+                            <p class="text-xs font-weight-bold mb-0">{{bid.bidder.name}}</p>
+                            </td>
+                            <td class="align-middle text-center text-sm">
+                            <span class="text-secondary text-xs font-weight-bold">Rs. {{bid.amount}}</span>
+                            </td>
+                            <td class="align-middle text-center">
+                            <span class="text-secondary text-xs font-weight-bold">{{bid.timestamp}}</span>
+                            </td>
+                            <td class="align-middle text-center">
+                              <a href="{% url 'bid_delete' bid.id %}" class="btn btn-link text-danger text-gradient px-3 mb-0">
+                                  <i class="material-icons text-sm me-2">delete</i> Delete
+                              </a>
+                          </td>
+                        </tr>
+                    {%endfor%}
+                  <!-- row ending -->
+
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{%endblock%}
+

@@ -1,0 +1,658 @@
+<!doctype html>
+{% load static %}
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <meta name="description" content="">
+        <meta name="author" content="">
+
+        <title>Barista Cafe HTML CSS Template</title>
+
+        <!-- CSS FILES -->                
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+        <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200;0,400;0,600;0,700;1,200;1,700&display=swap" rel="stylesheet">
+            
+        <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+
+        <link href="{% static 'css/bootstrap-icons.css' %}" rel="stylesheet">
+
+        <link href="{% static 'css/vegas.min.css' %}" rel="stylesheet">
+
+        <link href="{% static 'css/tooplate-barista.css' %}" rel="stylesheet">
+        
+<!--
+
+Tooplate 2137 Barista Cafe
+
+https://www.tooplate.com/view/2137-barista-cafe
+
+Bootstrap 5 HTML CSS Template
+
+-->
+<style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    
+    body {
+      background-color: #121212;
+      color: white;
+      overflow-x: hidden;
+    }
+    
+    .hero-section {
+      position: relative;
+      height: 100vh;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    
+    .hero-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1;
+    }
+    
+    .hero-slideshow {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+    }
+    
+    .hero-slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-size: cover;
+      background-position: center;
+      opacity: 0;
+      transition: opacity 1s ease-in-out;
+    }
+    
+    .hero-slide.active {
+      opacity: 1;
+    }
+    
+    .slide1 {
+      background-image: url('https://t4.ftcdn.net/jpg/01/91/05/77/360_F_191057762_4xsRetUOOw5Ld1Nlq0uB055CLpRxGVlB.jpg');
+    }
+    
+    .slide2 {
+      background-image: url('https://thespicepeople.com.au/cdn/shop/files/mixed-spices-2024-12-06-16-17-15-web.jpg?v=1735002864&width=2568');
+    }
+    
+    .slide3 {
+      background-image: url('https://res.cloudinary.com/hz3gmuqw6/image/upload/c_fill,q_30,w_750/f_auto/list-of-spices-phpOla7B5');
+    }
+    
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      max-width: 800px;
+      padding: 0 20px;
+    }
+    
+    .hero-badge {
+      display: inline-block;
+      background-color: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      padding: 8px 16px;
+      border-radius: 50px;
+      margin-bottom: 20px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #f8b400;
+    }
+    
+    .hero-title {
+      font-size: 64px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      line-height: 1.1;
+    }
+    
+    .hero-description {
+      font-size: 18px;
+      line-height: 1.6;
+      margin-bottom: 30px;
+      opacity: 0.9;
+    }
+    
+    .hero-cta {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+    }
+    
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px 32px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    
+    .btn-primary {
+      background-color: #f8b400;
+      color: #000;
+    }
+    
+    .btn-primary:hover {
+      background-color: #e5a700;
+      transform: translateY(-2px);
+    }
+    
+    .btn-secondary {
+      background-color: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .btn-secondary:hover {
+      background-color: rgba(255, 255, 255, 0.15);
+      transform: translateY(-2px);
+    }
+    
+    .scroll-indicator {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2;
+      opacity: 0.7;
+      animation: bounce 2s infinite;
+    }
+    
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0) translateX(-50%);
+      }
+      40% {
+        transform: translateY(-20px) translateX(-50%);
+      }
+      60% {
+        transform: translateY(-10px) translateX(-50%);
+      }
+    }
+    
+    .scroll-indicator svg {
+      width: 32px;
+      height: 32px;
+      fill: white;
+    }
+    
+    @media (max-width: 768px) {
+      .hero-title {
+        font-size: 42px;
+      }
+      
+      .hero-description {
+        font-size: 16px;
+      }
+      
+      .hero-cta {
+        flex-direction: column;
+      }
+    }
+  </style>
+
+    </head>
+    
+    <body>
+                
+            <main>
+                <nav class="navbar navbar-expand-lg">                
+                    <div class="container">
+                        <a class="navbar-brand d-flex align-items-center" href="index.html">
+                            Spices Auction
+                        </a>
+        
+                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+        
+                        <div class="collapse navbar-collapse" id="navbarNav">
+                            <ul class="navbar-nav ms-lg-auto">
+                                <li class="nav-item">
+                                    <a class="nav-link click-scroll" href="#section_1">Home</a>
+                                </li>
+        
+                                <li class="nav-item">
+                                    <a class="nav-link click-scroll" href="#section_2">About</a>
+                                </li>
+
+
+                                <li class="nav-item">
+                                    <a class="nav-link click-scroll" href="#section_4">Reviews</a>
+                                </li>
+
+
+                            </ul>
+
+                            <div class="ms-lg-3">
+                                <a class="btn custom-btn custom-border-btn" href="{% url 'signin'%}">
+                                    SignIn/SignUp
+                                    <i class="bi-arrow-up-right ms-2"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+
+
+
+                  <section class="hero-section" id="section_1">
+                    <div class="hero-overlay"></div>
+                    
+                    <div class="hero-slideshow">
+                      <div class="hero-slide slide1 active"></div>
+                      <div class="hero-slide slide2"></div>
+                      <div class="hero-slide slide3"></div>
+                    </div>
+                    
+                    <div class="hero-content">
+                      <div class="hero-badge">Premium Quality Since 2009</div>
+                      <h1 class="hero-title">Discover Exceptional Spices at Competitive Auctions</h1>
+                      <p class="hero-description">Join the premier marketplace for premium spices sourced directly from farmers and established distributors. Our auctions feature the finest turmeric, star anise, cardamom, and more exotic spices from around the world.</p>
+                      <div class="hero-cta">
+                        <a href="#section_2" class="btn btn-primary">Explore Our Collection</a>
+                        <a href="#" class="btn btn-secondary">Learn About Auctions</a>
+                      </div>
+                    </div>
+                    
+                    <div class="scroll-indicator">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M7.41,8.59L12,13.17l4.59-4.58L18,10l-6,6l-6-6L7.41,8.59z"/>
+                      </svg>
+                    </div>
+                  </section>
+                
+
+
+
+                <section class="about-section section-padding" id="section_2">
+                    <div class="section-overlay"></div>
+                    <div class="container">
+                        <div class="row align-items-center">
+
+                            <div class="col-lg-6 col-12">
+                                <div class="ratio ratio-1x1">
+  <img src="https://t4.ftcdn.net/jpg/01/02/58/91/360_F_102589163_hk02O92vzEYP0rZbVyvDTbkje1GaUDk1.jpg" alt="" style="border-radius: 33px;">
+
+                                    <div class="about-video-info d-flex flex-column">
+                                        <h4 class="mt-auto">We Started Since 2009.</h4>
+
+                                        <h4>Spices Auction.</h4>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-5 col-12 mt-4 mt-lg-0 mx-auto">
+                                <em class="text-white">Spices Auction</em>
+
+                                <h2 class="text-white mb-3">Spices </h2>
+
+                                <p class="text-white">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Aspernatur delectus quaerat deleniti nemo eligendi repudiandae rem qui aut, aliquid quia sapiente natus in libero provident tempora neque necessitatibus fugiat! Nemo!</p>
+
+                                <p class="text-white">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Aspernatur delectus quaerat deleniti nemo eligendi repudiandae rem qui aut, aliquid quia sapiente natus in libero provident tempora neque necessitatibus fugiat! Nemo!<a rel="nofollow" href="https://www.tooplate.com" target="_blank">Tooplate</a>.</p>
+
+                                <a href="#barista-team" class="smoothscroll btn custom-btn custom-border-btn mt-3 mb-4">Meet Spices Auction</a>
+                            </div>
+
+                        </div>
+                    </div>
+                </section>
+
+
+                <section class="barista-section section-padding section-bg" id="barista-team">
+                    <div class="container">
+                        <div class="row justify-content-center">
+
+                            <div class="col-lg-12 col-12 text-center mb-4 pb-lg-2">
+                                <em class="text-white">Spices Auction</em>
+
+                                <h2 class="text-white"> Spices</h2>
+                            </div>
+
+                            <div class="col-lg-3 col-md-6 col-12 mb-4">
+                                <div class="team-block-wrap">
+                                    <div class="team-block-info d-flex flex-column">
+                                        <div class="d-flex mt-auto mb-3">
+                                            <h4 class="text-white mb-0">Steve</h4>
+
+                                            <p class="badge ms-4"><em>Boss</em></p>
+                                        </div>
+
+                                        <p class="text-white mb-0">your favourite coffee daily lives tempor.</p>
+                                    </div>
+
+                                    <div class="team-block-image-wrap">
+                                        <img src="https://static.vecteezy.com/system/resources/previews/035/998/108/non_2x/ai-generated-hyperrealistic-of-turmeric-root-and-sliced-isolated-on-a-white-background-photo.jpg" class="team-block-image img-fluid" alt="">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-3 col-md-6 col-12 mb-4">
+                                <div class="team-block-wrap">
+                                    <div class="team-block-info d-flex flex-column">
+                                        <div class="d-flex mt-auto mb-3">
+                                            <h4 class="text-white mb-0">Sandra</h4>
+
+                                            <p class="badge ms-4"><em>Manager</em></p>
+                                        </div>
+
+                                        <p class="text-white mb-0">your favourite coffee daily lives.</p>
+                                    </div>
+
+                                    <div class="team-block-image-wrap">
+                                        <img src="https://m.media-amazon.com/images/I/71KKolShYNL._AC_UF894,1000_QL80_.jpg" class="team-block-image img-fluid" alt="">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-3 col-md-6 col-12 mb-4">
+                                <div class="team-block-wrap">
+                                    <div class="team-block-info d-flex flex-column">
+                                        <div class="d-flex mt-auto mb-3">
+                                            <h4 class="text-white mb-0">Jackson</h4>
+
+                                            <p class="badge ms-4"><em>Senior</em></p>
+                                        </div>
+
+                                        <p class="text-white mb-0">your favourite coffee daily lives.</p>
+                                    </div>
+
+                                    <div class="team-block-image-wrap">
+                                        <img src="https://5.imimg.com/data5/ECOM/Default/2024/9/450502412/NA/MX/VH/141449392/ananas-flowerstar-anisebadiyana-phool-premium-quality-quick-pantry-500x500.jpg" class="team-block-image img-fluid" alt="">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-3 col-md-6 col-12">
+                                <div class="team-block-wrap">
+                                    <div class="team-block-info d-flex flex-column">
+                                        <div class="d-flex mt-auto mb-3">
+                                            <h4 class="text-white mb-0">Michelle</h4>
+
+                                            <p class="badge ms-4"><em>Barista</em></p>
+                                        </div>
+
+                                        <p class="text-white mb-0">your favourite coffee daily consectetur.</p>
+                                    </div>
+
+                                    <div class="team-block-image-wrap">
+                                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSPLvSX6-Lfp4GTIuJTpsFvqb3amgLwnkPAgg&s" class="team-block-image img-fluid" alt="">
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </section>
+
+
+                <section class="reviews-section section-padding section-bg" id="section_4">
+                    <div class="container">
+                        <div class="row justify-content-center">
+
+                            <div class="col-lg-12 col-12 text-center mb-4 pb-lg-2">
+                                <em class="text-white">Reviews by Customers</em>
+
+                                <h2 class="text-white">Testimonials</h2>
+                            </div>
+
+                            <div class="timeline">
+                                <div class="timeline-container timeline-container-left">
+                                    <div class="timeline-content">
+                                        <div class="reviews-block">
+                                            <div class="reviews-block-image-wrap d-flex align-items-center">
+                                                <img src="{% static 'images/reviews/young-woman-with-round-glasses-yellow-sweater.jpg' %}" class="reviews-block-image img-fluid" alt="">
+
+                                                <div class="">
+                                                    <h6 class="text-white mb-0">Sandra</h6>
+                                                    <em class="text-white"> Customers</em>
+                                                </div>
+                                            </div>
+
+                                            <div class="reviews-block-info">
+                                                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+
+                                                <div class="d-flex border-top pt-3 mt-4">
+                                                    <strong class="text-white">4.5 <small class="ms-2">Rating</small></strong>
+
+                                                    <div class="reviews-group ms-auto">
+                                                        <i class="bi-star-fill"></i>
+                                                        <i class="bi-star-fill"></i>
+                                                        <i class="bi-star-fill"></i>
+                                                        <i class="bi-star-fill"></i>
+                                                        <i class="bi-star"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="timeline-container timeline-container-right">
+                                    <div class="timeline-content">
+                                        <div class="reviews-block">
+                                            <div class="reviews-block-image-wrap d-flex align-items-center">
+                                                <img src="{% static 'images/reviews/senior-man-white-sweater-eyeglasses.jpg' %}" class="reviews-block-image img-fluid" alt="">
+
+                                                <div class="">
+                                                    <h6 class="text-white mb-0">Don</h6>
+                                                    <em class="text-white"> Customers</em>
+                                                </div>
+                                            </div>
+
+                                            <div class="reviews-block-info">
+                                                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+
+                                                <div class="d-flex border-top pt-3 mt-4">
+                                                    <strong class="text-white">4.5 <small class="ms-2">Rating</small></strong>
+
+                                                    <div class="reviews-group ms-auto">
+                                                        <i class="bi-star-fill"></i>
+                                                        <i class="bi-star-fill"></i>
+                                                        <i class="bi-star-fill"></i>
+                                                        <i class="bi-star-fill"></i>
+                                                        <i class="bi-star"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="timeline-container timeline-container-left">
+                                    <div class="timeline-content">
+                                        <div class="reviews-block">
+                                            <div class="reviews-block-image-wrap d-flex align-items-center">
+                                                <img src="{% static 'images/reviews/young-beautiful-woman-pink-warm-sweater-natural-look-smiling-portrait-isolated-long-hair.jpg' %}" class="reviews-block-image img-fluid" alt="">
+
+                                                <div class="">
+                                                    <h6 class="text-white mb-0">Olivia</h6>
+                                                    <em class="text-white"> Customers</em>
+                                                </div>
+                                            </div>
+
+                                            <div class="reviews-block-info">
+                                                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+
+                                                <div class="d-flex border-top pt-3 mt-4">
+                                                    <strong class="text-white">4.5 <small class="ms-2">Rating</small></strong>
+
+                                                    <div class="reviews-group ms-auto">
+                                                        <i class="bi-star-fill"></i>
+                                                        <i class="bi-star-fill"></i>
+                                                        <i class="bi-star-fill"></i>
+                                                        <i class="bi-star-fill"></i>
+                                                        <i class="bi-star"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </section>
+
+
+
+                <footer class="site-footer">
+                    <div class="container">
+                        <div class="row">
+
+                            <div class="col-lg-4 col-12 me-auto">
+                                <em class="text-white d-block mb-4">Where to find us?</em>
+
+                                <strong class="text-white">
+                                    <i class="bi-geo-alt me-2"></i>
+                                    Hostlane Technolab Vandanam, Alappuzha, India
+                                </strong>
+
+                                <ul class="social-icon mt-4">
+                                    <li class="social-icon-item">
+                                        <a href="#" class="social-icon-link bi-facebook">
+                                        </a>
+                                    </li>
+        
+                                    <li class="social-icon-item">
+                                        <a href="https://www.hostlanetechnolab.com/" target="_new" class="social-icon-link bi-twitter">
+                                        </a>
+                                    </li>
+
+                                    <li class="social-icon-item">
+                                        <a href="#" class="social-icon-link bi-whatsapp">
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <div class="col-lg-3 col-12 mt-4 mb-3 mt-lg-0 mb-lg-0">
+                                <em class="text-white d-block mb-4">Contact</em>
+
+                                <p class="d-flex mb-1">
+                                    <strong class="me-2">Phone:</strong>
+                                    <a href="tel: 305-240-9671" class="site-footer-link">
+                                        (65) 
+                                        305 2409 671
+                                    </a>
+                                </p>
+
+                                <p class="d-flex">
+                                    <strong class="me-2">Email:</strong>
+
+                                    <a href="mailto:info@yourgmail.com" class="site-footer-link">
+                                        contact@hostlanetechnolab.com
+                                    </a>
+                                </p>
+                            </div>
+
+
+                            <div class="col-lg-5 col-12">
+                                <em class="text-white d-block mb-4">Opening Hours.</em>
+
+                                <ul class="opening-hours-list">
+                                    <li class="d-flex">
+                                        Monday - Friday
+                                        <span class="underline"></span>
+
+                                        <strong>9:00 - 18:00</strong>
+                                    </li>
+
+                                    <li class="d-flex">
+                                        Saturday
+                                        <span class="underline"></span>
+
+                                        <strong>11:00 - 16:30</strong>
+                                    </li>
+
+                                    <li class="d-flex">
+                                        Sunday
+                                        <span class="underline"></span>
+
+                                        <strong>Closed</strong>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <div class="col-lg-8 col-12 mt-4">
+                                <p class="copyright-text mb-0">Copyright © Hostlane Technolab <a rel="sponsored" href="https://www.hostlanetechnolab.com/" target="_blank"></a></p>
+                            </div>
+                    </div>
+                </footer>
+                
+            </main>
+
+        <!-- JAVASCRIPT FILES -->
+        <script src="{% static 'js/jquery.min.js' %}"></script>
+        <script src="{% static 'js/bootstrap.min.js' %}"></script>
+        <script src="{% static 'js/jquery.sticky.js' %}"></script>
+        <script src="{% static 'js/click-scroll.js' %}"></script>
+        <script src="{% static 'js/vegas.min.js' %}"></script>
+        <script src="{% static 'js/custom.js' %}"></script>
+        <script>
+            // Simple slideshow functionality
+            const slides = document.querySelectorAll('.hero-slide');
+            let currentSlide = 0;
+            
+            function nextSlide() {
+              slides[currentSlide].classList.remove('active');
+              currentSlide = (currentSlide + 1) % slides.length;
+              slides[currentSlide].classList.add('active');
+            }
+            
+            // Change slide every 5 seconds
+            setInterval(nextSlide, 5000);
+            
+            // Smooth scroll functionality
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+              anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                
+                if (targetElement) {
+                  window.scrollTo({
+                    top: targetElement.offsetTop,
+                    behavior: 'smooth'
+                  });
+                }
+              });
+            });
+          </script>
+
+    </body>
+</html>

@@ -1,0 +1,517 @@
+{%extends 'user/base.html'%}
+{%load static%}
+{%block body_block%}
+
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+    /* Base Styles */
+    html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
+      margin: 0;
+      padding: 0;
+      border: 0;
+      font-size: 100%;
+      font: inherit;
+      vertical-align: baseline;
+      outline: none;
+      -webkit-font-smoothing: antialiased;
+      -webkit-text-size-adjust: 100%;
+      -ms-text-size-adjust: 100%;
+      box-sizing: border-box;
+    }
+    
+    html { overflow-y: scroll; }
+    
+    body { 
+      background: linear-gradient(135deg, #f9f0e1 0%, #e0c097 100%);
+      font-family: 'Poppins', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-size: 62.5%;
+      line-height: 1;
+      color: #442913;
+      padding-bottom: 55px;
+      position: relative;
+      min-height: 100vh;
+    }
+    
+    /* Background Pattern */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: 
+        radial-gradient(circle at 25% 25%, rgba(255,255,255,0.2) 0%, transparent 10%),
+        radial-gradient(circle at 75% 75%, rgba(255,255,255,0.2) 0%, transparent 10%),
+        radial-gradient(circle at 50% 50%, rgba(255,255,255,0.2) 0%, transparent 10%);
+      background-size: 50px 50px;
+      animation: backgroundMove 30s infinite linear;
+      opacity: 0.5;
+      z-index: -1;
+    }
+    
+    @keyframes backgroundMove {
+      0% { background-position: 0 0; }
+      100% { background-position: 100px 100px; }
+    }
+
+    ::selection { background: #c17a21; color: #fff; }
+    ::-moz-selection { background: #c17a21; color: #fff; }
+    ::-webkit-selection { background: #c17a21; color: #fff; }
+
+    br { display: block; line-height: 1.6em; } 
+
+    article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section { display: block; }
+    ol, ul { list-style: none; }
+
+    input, textarea { 
+      -webkit-font-smoothing: antialiased;
+      -webkit-text-size-adjust: 100%;
+      -ms-text-size-adjust: 100%;
+      box-sizing: border-box;
+      outline: none; 
+      font-family: 'Poppins', sans-serif;
+      font-size: 1.6em;
+      padding: 12px 15px;
+      border: 2px solid rgba(224, 192, 151, 0.5);
+      border-radius: 8px;
+      background-color: rgba(255, 255, 255, 0.9);
+      transition: all 0.3s ease;
+      width: 100%;
+      color: #442913;
+    }
+    
+    input:focus, textarea:focus {
+      border-color: #c17a21;
+      box-shadow: 0 0 10px rgba(193, 122, 33, 0.2);
+      background-color: #fff;
+    }
+    
+    textarea {
+      min-height: 150px;
+      resize: vertical;
+    }
+    
+    label {
+      display: block;
+      font-size: 1.6em;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: #442913;
+    }
+
+    blockquote, q { quotes: none; }
+    blockquote:before, blockquote:after, q:before, q:after { content: ''; content: none; }
+    strong, b { font-weight: bold; } 
+
+    table { border-collapse: collapse; border-spacing: 0; }
+    img { border: 0; max-width: 100%; }
+
+    h1 { 
+      font-weight: bold;
+      font-size: 3.2em;
+      line-height: 1.4em;
+      margin-bottom: 30px;
+      text-align: center;
+      color: #442913;
+      position: relative;
+      display: inline-block;
+      animation: fadeIn 1.5s ease-in-out;
+    }
+    
+    h1::after {
+      content: '';
+      position: absolute;
+      width: 60%;
+      height: 3px;
+      bottom: -10px;
+      left: 20%;
+      background-color: #c17a21;
+      transform: scaleX(0);
+      transform-origin: bottom right;
+      transition: transform 0.5s ease-out;
+      animation: highlightBar 6s infinite;
+    }
+    
+    @keyframes highlightBar {
+      0% { transform: scaleX(0); transform-origin: bottom right; }
+      50% { transform: scaleX(1); transform-origin: bottom left; }
+      100% { transform: scaleX(0); transform-origin: bottom right; }
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Form Container */
+    .form-container {
+      display: block;
+      width: 85%;
+      max-width: 800px;
+      background: #fff;
+      margin: 80px auto;
+      padding: 40px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      border-radius: 15px;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      border: 1px solid rgba(224, 192, 151, 0.3);
+    }
+    
+    .form-container:hover {
+      box-shadow: 0 15px 40px rgba(193, 122, 33, 0.2);
+      transform: translateY(-5px);
+    }
+    
+    /* Floating elements */
+    .form-container::before {
+      content: "";
+      position: absolute;
+      top: -50px;
+      right: -50px;
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background-color: rgba(224, 192, 151, 0.2);
+      z-index: 0;
+    }
+    
+    .form-container::after {
+      content: "";
+      position: absolute;
+      bottom: -30px;
+      left: -30px;
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background-color: rgba(193, 122, 33, 0.15);
+      z-index: 0;
+    }
+
+    /* Form title */
+    .form-title {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #442913;
+      font-size: 2.8em;
+      font-weight: 600;
+      position: relative;
+    }
+    
+    .form-title::after {
+      content: '';
+      display: block;
+      width: 80px;
+      height: 4px;
+      background: linear-gradient(to right, #c17a21, #e0c097);
+      margin: 15px auto 0;
+      border-radius: 2px;
+    }
+    
+    /* Form field group */
+    .form-group {
+      margin-bottom: 25px;
+      position: relative;
+    }
+    
+    /* Required field indicator */
+    .form-group.required label::after {
+      content: '*';
+      color: #c17a21;
+      margin-left: 5px;
+    }
+    
+    /* Form field icon */
+    .field-icon {
+      position: absolute;
+      right: 15px;
+      top: 43px;
+      color: rgba(193, 122, 33, 0.6);
+      transition: all 0.3s ease;
+    }
+    
+    .form-group input:focus ~ .field-icon,
+    .form-group textarea:focus ~ .field-icon {
+      color: #c17a21;
+      transform: scale(1.1);
+    }
+    
+    /* Help text */
+    .help-text {
+      font-size: 1.2em;
+      color: #8a5517;
+      margin-top: 8px;
+      font-style: italic;
+    }
+    
+    /* Submit button */
+    .submit-btn {
+      background: linear-gradient(135deg, #c17a21 0%, #8a5517 100%);
+      color: white;
+      border: none;
+      padding: 15px 30px;
+      font-size: 1.6em;
+      font-weight: 600;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: block;
+      width: 100%;
+      margin-top: 20px;
+      letter-spacing: 0.5px;
+      box-shadow: 0 5px 15px rgba(193, 122, 33, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .submit-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: all 0.5s ease;
+    }
+    
+    .submit-btn:hover::before {
+      left: 100%;
+      animation: shine 1.5s infinite;
+    }
+    
+    .submit-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(193, 122, 33, 0.4);
+    }
+    
+    .submit-btn:active {
+      transform: translateY(1px);
+      box-shadow: 0 3px 10px rgba(193, 122, 33, 0.3);
+    }
+    
+    @keyframes shine {
+      0% { left: -100%; }
+      100% { left: 100%; }
+    }
+    
+    /* Form success/error messages */
+    .form-message {
+      padding: 15px;
+      margin: 20px 0;
+      border-radius: 8px;
+      font-size: 1.4em;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .form-message.success {
+      background-color: rgba(75, 181, 67, 0.1);
+      color: #2d701a;
+      border: 1px solid rgba(75, 181, 67, 0.3);
+    }
+    
+    .form-message.error {
+      background-color: rgba(227, 70, 53, 0.1);
+      color: #ad2e1e;
+      border: 1px solid rgba(227, 70, 53, 0.3);
+    }
+    
+    .form-message i {
+      margin-right: 10px;
+      font-size: 1.8em;
+    }
+    
+    /* Floating spice elements */
+    .spice-floater {
+        position: fixed;
+        width: 30px;
+        height: 30px;
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+        opacity: 0.15;
+        z-index: -1;
+        pointer-events: none;
+    }
+    
+    .spice-1 {
+        top: 10%;
+        left: 5%;
+        background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="%23c17a21"/></svg>');
+        animation: float1 15s infinite linear;
+    }
+    
+    .spice-2 {
+        top: 20%;
+        right: 10%;
+        background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><polygon points="50,10 90,90 10,90" fill="%23a05c17"/></svg>');
+        animation: float2 18s infinite linear;
+    }
+    
+    .spice-3 {
+        bottom: 15%;
+        left: 15%;
+        background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect x="20" y="20" width="60" height="60" fill="%238a5517"/></svg>');
+        animation: float3 20s infinite linear;
+    }
+    
+    @keyframes float1 {
+        0% { transform: translate(0, 0) rotate(0deg); }
+        50% { transform: translate(100px, 50px) rotate(180deg); }
+        100% { transform: translate(0, 0) rotate(360deg); }
+    }
+    
+    @keyframes float2 {
+        0% { transform: translate(0, 0) rotate(0deg); }
+        50% { transform: translate(-70px, 100px) rotate(-180deg); }
+        100% { transform: translate(0, 0) rotate(-360deg); }
+    }
+    
+    @keyframes float3 {
+        0% { transform: translate(0, 0) rotate(0deg) scale(1); }
+        50% { transform: translate(120px, -80px) rotate(180deg) scale(1.5); }
+        100% { transform: translate(0, 0) rotate(360deg) scale(1); }
+    }
+    
+    /* Form field animation */
+    @keyframes fieldFocus {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+      100% { transform: scale(1); }
+    }
+    
+    input:focus, textarea:focus {
+      animation: fieldFocus 0.5s ease;
+    }
+    
+    /* Responsive styles */
+    @media screen and (max-width: 768px) {
+        .form-container {
+            width: 95%;
+            padding: 25px;
+            margin: 60px auto;
+        }
+        
+        .form-title {
+            font-size: 2.4em;
+        }
+        
+        label {
+            font-size: 1.4em;
+        }
+        
+        input, textarea, .submit-btn {
+            font-size: 1.4em;
+        }
+    }
+    
+    @media screen and (max-width: 480px) {
+        .form-container {
+            padding: 20px;
+            margin: 40px auto;
+        }
+        
+        .form-title {
+            font-size: 2.2em;
+        }
+        
+        label {
+            font-size: 1.3em;
+        }
+        
+        input, textarea, .submit-btn {
+            font-size: 1.3em;
+            padding: 10px 12px;
+        }
+        
+        .submit-btn {
+            padding: 12px 20px;
+        }
+    }
+</style>
+
+<!-- Floating spice elements -->
+<div class="spice-floater spice-1"></div>
+<div class="spice-floater spice-2"></div>
+<div class="spice-floater spice-3"></div>
+
+<div class="form-container" style="margin-top: 180px;">
+    <h2 class="form-title">Share Your Feedback</h2>
+    
+    <!-- Optional: Success message (uncomment if needed) -->
+    <!-- <div class="form-message success">
+        <i class="fas fa-check-circle"></i> Your feedback has been submitted successfully!
+    </div> -->
+    
+    <form action="" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <!-- Dynamically render form fields with improved styling -->
+        {% for field in form %}
+        <div class="form-group {% if field.field.required %}required{% endif %}">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+            {% if field.help_text %}
+            <div class="help-text">{{ field.help_text }}</div>
+            {% endif %}
+            {% if field.errors %}
+            <div class="form-message error">
+                <i class="fas fa-exclamation-circle"></i> {{ field.errors }}
+            </div>
+            {% endif %}
+            
+
+        </div>
+        {% endfor %}
+        
+        <button type="submit" class="submit-btn">
+            <i class="fas fa-paper-plane"></i> Submit Feedback
+        </button>
+    </form>
+</div>
+
+<!-- Add Font Awesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+<!-- Custom field type filter (add to your Django project) -->
+{% comment %}
+<!-- Add this to your templatetags folder in your app -->
+@register.filter
+def fieldtype(field):
+    return field.field.widget.__class__.__name__.lower()
+{% endcomment %}
+
+<script>
+    // Form submission animation
+    document.querySelector('form').addEventListener('submit', function(e) {
+        const submitBtn = document.querySelector('.submit-btn');
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+        submitBtn.style.opacity = '0.8';
+        
+        // This is just for visual feedback - the form will still submit normally
+        setTimeout(function() {
+            submitBtn.innerHTML = '<i class="fas fa-check"></i> Submitted';
+        }, 1000);
+    });
+    
+    // Focus effect
+    const formInputs = document.querySelectorAll('input, textarea');
+    formInputs.forEach(input => {
+        input.addEventListener('focus', function() {
+            this.parentElement.style.transform = 'translateY(-3px)';
+            this.parentElement.style.transition = 'transform 0.3s ease';
+        });
+        
+        input.addEventListener('blur', function() {
+            this.parentElement.style.transform = 'translateY(0)';
+        });
+    });
+</script>
+
+{%endblock%}

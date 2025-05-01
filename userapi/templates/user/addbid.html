@@ -1,0 +1,217 @@
+{% extends 'user/base.html' %}
+{% load static %}
+
+{% block body_block %}
+<div class="auction-container">
+    <div class="auction-header">
+        <h2>Auction Details</h2>
+    </div>
+    
+    <div class="auction-content">
+        <div class="auction-info">
+            <div class="spice-image">
+                {% if auction.spice.image %}
+                    <img src="{{ auction.spice.image.url }}" alt="{{ auction.spice.name }}">
+                {% else %}
+                    <img src="{% static 'images/default-spice.jpg' %}" alt="Default Spice Image">
+                {% endif %}
+            </div>
+            
+            <div class="spice-details">
+                <h3>{{ auction.spice.name }}</h3>
+                <p class="auctioneer"><strong>Auctioneer:</strong> {{ auction.auctioneer }}</p>
+                <p class="description"><strong>Description:</strong> {{ auction.spice.description }}</p>
+                
+                <div class="bid-details">
+                    <div class="bid-info">
+                        <p><strong>Starting Bid:</strong> Rs. {{ auction.starting_bid }}</p>
+                        <p><strong>Expected Bid:</strong> Rs. {{ auction.expected_bid }}</p>
+                        <p><strong>Stock Quantity:</strong> {{ auction.spice.stock_quantity }} kg</p>
+                    </div>
+                    
+                    <div class="auction-status">
+                        <p class="time-remaining"><strong>Auction Ends:</strong> <span id="end-time">{{ auction.end_time }}</span></p>
+                        <p class="current-bid"><strong>Current Highest Bid:</strong> <span class="highlight">Rs. {{ highbid }}</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bidding-form">
+            <h4>Place Your Bid</h4>
+            <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="bid-button">Submit Bid</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    .auction-container {
+        max-width: 1000px;
+        margin: 2rem auto;
+        padding: 1.5rem;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    .auction-header {
+        border-bottom: 2px solid #f0f0f0;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.75rem;
+    }
+    
+    .auction-header h2 {
+        color: #333;
+        margin: 0;
+        font-size: 1.75rem;
+    }
+    
+    .auction-content {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+    }
+    
+    .auction-info {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 2rem;
+    }
+    
+    .spice-image {
+        flex: 0 0 300px;
+    }
+    
+    .spice-image img {
+        width: 100%;
+        height: auto;
+        border-radius: 6px;
+        object-fit: cover;
+    }
+    
+    .spice-details {
+        flex: 1;
+        min-width: 300px;
+    }
+    
+    .spice-details h3 {
+        margin-top: 0;
+        font-size: 1.5rem;
+        color: #222;
+    }
+    
+    .description {
+        margin: 1rem 0;
+        line-height: 1.6;
+    }
+    
+    .bid-details {
+        display: flex;
+        flex-wrap: wrap;
+        margin-top: 1.5rem;
+        gap: 2rem;
+    }
+    
+    .bid-info, .auction-status {
+        flex: 1;
+        min-width: 200px;
+    }
+    
+    .highlight {
+        color: #e74c3c;
+        font-weight: bold;
+        font-size: 1.1rem;
+    }
+    
+    .time-remaining {
+        color: #2c3e50;
+        font-weight: 500;
+    }
+    
+    .bidding-form {
+        background-color: #f9f9f9;
+        padding: 1.5rem;
+        border-radius: 6px;
+        border-top: 3px solid #3498db;
+    }
+    
+    .bidding-form h4 {
+        margin-top: 0;
+        color: #333;
+    }
+    
+    .bid-button {
+        background-color: #3498db;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: background-color 0.2s;
+    }
+    
+    .bid-button:hover {
+        background-color: #2980b9;
+    }
+    
+    /* Form styling */
+    .bidding-form label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+    }
+    
+    .bidding-form input {
+        width: 100%;
+        padding: 8px 12px;
+        margin-bottom: 1rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+    
+    @media (max-width: 768px) {
+        .auction-info {
+            flex-direction: column;
+        }
+        
+        .spice-image {
+            flex: 0 0 100%;
+        }
+    }
+</style>
+
+<script>
+    // Add countdown timer functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const endTimeElement = document.getElementById('end-time');
+        const endTimeStr = endTimeElement.textContent;
+        const endTime = new Date(endTimeStr).getTime();
+        
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const distance = endTime - now;
+            
+            if (distance <= 0) {
+                endTimeElement.innerHTML = "<span style='color: red;'>Auction Ended</span>";
+                return;
+            }
+            
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+            
+            endTimeElement.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s remaining`;
+        }
+        
+        // Update countdown every second
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
+    });
+</script>
+{% endblock %}

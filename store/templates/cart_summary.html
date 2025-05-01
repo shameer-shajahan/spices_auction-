@@ -1,0 +1,137 @@
+{%extends 'b.html'%}
+
+{%block main_block%}
+
+<!-- Breadcrumb start -->
+<nav class="mx-auto max-w-screen-xl px-4 py-4">
+  <ol class="flex items-center gap-1 text-sm text-amber-700">
+    <li>
+      <a href="{%url 'store:productlist' %}" class="block transition hover:text-amber-900">
+        <span class="sr-only"> Home </span>
+
+        <svg xmlns="http://www.w3.org/2000/svg" class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+        </svg>
+      </a>
+    </li>
+
+    <li class="rtl:rotate-180">
+      <svg xmlns="http://www.w3.org/2000/svg" class="size-4" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd"
+          d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+          clip-rule="evenodd" />
+      </svg>
+    </li>
+
+    <li>
+      <a href="#" class="block transition hover:text-amber-900"> {{data.category_object}}</a>
+    </li>
+
+    <li class="rtl:rotate-180">
+      <svg xmlns="http://www.w3.org/2000/svg" class="size-4" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd"
+          d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+          clip-rule="evenodd" />
+      </svg>
+    </li>
+
+    <li>
+      <a href="#" class="block transition hover:text-amber-900"> {{data.title}} </a>
+    </li>
+  </ol>
+</nav>
+<!-- breadcrumb ends -->
+
+<div class="mx-auto max-w-screen-xl px-4 pb-12">
+  <div class="rounded-lg overflow-hidden shadow-md my-8">
+    <div class="sm:flex">
+      <div class="w-full sm:w-3/4 bg-white px-6 py-8">
+        <div class="flex justify-between border-b border-amber-100 pb-6">
+          <h1 class="text-2xl font-bold text-amber-900">Shopping Cart</h1>
+          <h2 class="text-xl font-medium text-amber-800">{{basket_item_count}} Items</h2>
+        </div>
+
+        {%for bi in basket_items%}
+        <div class="md:flex items-stretch py-6 md:py-8 border-t border-amber-100">
+          {%if bi.spice_object.picture%}
+          <div class="md:w-1/3 w-full">
+            <img src="{{bi.spice_object.picture.url}}" alt="{{bi.spice_object.title}}" class="h-full object-cover md:block hidden rounded-lg" />
+            <img src="{{bi.spice_object.picture.url}}" alt="{{bi.spice_object.title}}" class="md:hidden w-full h-48 object-cover rounded-lg" />
+          </div>
+          {%else%}
+          <div class="md:w-1/3 w-full">
+            <img src="https://images.unsplash.com/photo-1635361184978-12e4b5ad6249?ixlib=rb-1.2.1&auto=format&fit=crop&w=1770&q=80" alt="Default Spice Image" class="h-full object-cover md:block hidden rounded-lg" />
+            <img src="https://images.unsplash.com/photo-1635361184978-12e4b5ad6249?ixlib=rb-1.2.1&auto=format&fit=crop&w=1770&q=80" alt="Default Spice Image" class="md:hidden w-full h-48 object-cover rounded-lg" />
+          </div>
+          {%endif%}
+          <div class="md:pl-6 md:w-2/3 flex flex-col justify-center">
+            <div class="flex items-center justify-between w-full">
+              <p class="text-lg font-bold text-amber-900">{{bi.spice_object.title}}</p>
+              <span class="py-2 px-4 border border-amber-200 rounded-md text-amber-800 font-medium">
+                {{bi.quantity}}
+              </span>
+            </div>
+            <p class="text-sm text-gray-600 pt-2">Quantity: {{bi.quantity}}</p>
+            <p class="text-sm text-gray-600 py-2">Origin: {{bi.spice_object.origin_object|default:"Mixed"}}</p>
+            <p class="text-sm text-gray-600">Price: ₹{{bi.spice_object.price}}</p>
+            <div class="flex items-center justify-between pt-4">
+              <div class="flex items-center">
+                <button class="text-xs underline text-amber-700 hover:text-amber-900 cursor-pointer">
+                  Add to favorites
+                </button>
+                <a href="{%url 'store:delete' bi.id%}" class="text-xs underline text-red-600 hover:text-red-700 pl-5 cursor-pointer">
+                  Remove
+                </a>
+              </div>
+              <p class="font-bold text-amber-900">₹{{bi.item_total}}</p>
+            </div>
+          </div>
+        </div>
+        {%endfor%}
+
+        <a href="{%url 'store:productlist'%}" class="inline-flex items-center font-medium text-amber-600 text-sm mt-6 hover:text-amber-800 transition">
+          <svg class="fill-current mr-2 w-4" viewBox="0 0 448 512">
+            <path
+              d="M134.059 296H436c6.627 0 12-5.373 12-12v-56c0-6.627-5.373-12-12-12H134.059v-46.059c0-21.382-25.851-32.09-40.971-16.971L7.029 239.029c-9.373 9.373-9.373 24.569 0 33.941l86.059 86.059c15.119 15.119 40.971 4.411 40.971-16.971V296z" />
+          </svg>
+          Continue Shopping
+        </a>
+      </div>
+
+      <div id="summary" class="w-full sm:w-1/4 bg-amber-50 px-6 py-8">
+        <h1 class="text-2xl font-bold text-amber-900 border-b border-amber-200 pb-6">Order Summary</h1>
+        <div class="flex justify-between mt-6 mb-4">
+          <span class="font-medium text-sm uppercase text-amber-800">Items {{basket_item_count}}</span>
+          <span class="font-bold text-amber-900">₹{{basket_total}}</span>
+        </div>
+
+        <div class="py-6">
+          <label for="promo" class="font-medium inline-block mb-3 text-sm uppercase text-amber-800">
+            Promo Code
+          </label>
+          <input type="text" id="promo" placeholder="Enter your code" class="p-2 text-sm w-full rounded-md border border-amber-200 focus:outline-none focus:ring-2 focus:ring-amber-300" />
+        </div>
+        
+        <button class="bg-amber-500 hover:bg-amber-600 px-5 py-2 text-sm text-white uppercase rounded-md transition">
+          Apply
+        </button>
+        
+        <div class="border-t border-amber-200 mt-6">
+          <div class="flex font-bold justify-between py-6 text-sm uppercase">
+            <span class="text-amber-800">Total cost</span>
+            <span class="text-amber-900">₹{{basket_total}}</span>
+          </div>
+          
+          <a href="{%url 'store:place-order'%}">
+            <button class="rounded-lg bg-gradient-to-r from-amber-500 to-red-600 px-8 py-4 text-base font-semibold text-white shadow-md transition hover:from-amber-600 hover:to-red-700 focus:outline-none focus:ring-4 focus:ring-amber-300 w-full">
+              Checkout
+            </button>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{%endblock%}
