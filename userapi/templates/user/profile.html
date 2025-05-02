@@ -1,0 +1,161 @@
+{%extends 'user/base.html'%}
+{%load static%}
+{%block body_block%}
+
+
+
+
+<div class="container py-5" style="margin-top: 10rem;">
+    <div class="row">
+        <!-- Profile Header -->
+        <div class="col-12 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-body d-flex align-items-center">
+                    <div class="profile-avatar me-3">
+                        {% if user.profile %}
+                            <img src="{{ user.profile.url }}" alt="Profile" class="rounded-circle" width="80" height="80">
+                        {% else %}
+                            <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                                <span class="text-white fs-3">{{ user.username|first|upper }}</span>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <h2 class="mb-1">{{ user.name }}</h2>
+                        <p class="text-muted mb-0">Seller since: {{ user.date_joined|date:"F j, Y" }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sidebar -->
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">Account Info</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Username:</span>
+                            <span class="fw-bold">{{ user.username }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Email:</span>
+                            <span class="fw-bold">{{ user.email }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Phone:</span>
+                            <span class="fw-bold">{{ user.phone|default:"Not provided" }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Location:</span>
+                            <span class="fw-bold">{{ user.address|default:"Not provided" }}</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="card shadow-sm mt-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">Seller Statistics</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Products:</span>
+                            <span class="fw-bold">{{ user.products.count|default:"0" }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Total Sales:</span>
+                            <span class="fw-bold">{{ user.total_sales|default:"0" }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Rating:</span>
+                            <span class="fw-bold">
+                                {% if user.rating %}
+                                    {{ user.rating }} / 5.0
+                                {% else %}
+                                    No ratings yet
+                                {% endif %}
+                            </span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Content - Edit Profile Form -->
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">Edit Profile</h5>
+                </div>
+                <div class="card-body">
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                    
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="id_name" class="form-label">Name</label>
+                            <input type="text" class="form-control" style="margin-bottom: 5px;" id="id_name" name="name" value="{{ user.name }}" placeholder="Name">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="id_username" class="form-label">Username</label>
+                            <input type="text" class="form-control" style="margin-bottom: 5px;" id="id_username" name="username" value="{{ user.username }}" placeholder="Username">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="id_email_address" class="form-label">Email Address</label>
+                            <input type="email" class="form-control" style="margin-bottom: 5px;" id="id_email_address" name="email_address" value="{{ user.email_address }}" placeholder="Email Address">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="id_phone" class="form-label">Phone Number</label>
+                            <input type="number" class="form-control" style="margin-bottom: 5px;" id="id_phone" name="phone" value="{{ user.phone|default:'' }}" placeholder="Phone">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="id_address" class="form-label">Address</label>
+                            <textarea class="form-control" style="margin-bottom: 5px;" id="id_address" name="address" rows="3" placeholder="Address">{{ user.address|default:'' }}</textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="id_profile" class="form-label">Profile Image</label>
+                            <input type="file" class="form-control" style="margin-bottom: 5px;" id="id_profile" name="profile">
+                            {% if user.profile %}
+                                <div class="form-text">Current: {{ user.profile }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="id_id_proof" class="form-label">ID Proof</label>
+                            <input type="file" class="form-control" style="margin-bottom: 5px;" id="id_id_proof" name="id_proof">
+                            {% if user.id_proof %}
+                                <div class="form-text">Current: {{ user.id_proof }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+{% endblock %}

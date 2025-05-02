@@ -1,18 +1,1132 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Delete Confirmation Animation</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    
+    <style>
+    /* Core Styling */
+    body {
+        background-color: #f8f9fa;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+    }
+    
+    .container {
+        padding: 2rem 1rem;
+    }
+    
+    /* Deletion card styles with enhanced visuals */
+    .deletion-card {
+        border-radius: 12px;
+        overflow: hidden;
+        border-width: 2px;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        transform-origin: center center;
+    }
+    
+    .deletion-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 35px rgba(220, 53, 69, 0.2);
+    }
+    
+    .card-header {
+        padding: 1.5rem;
+        position: relative;
+    }
+    
+    /* Enhanced Warning Icon Animation */
+    .warning-icon {
+        animation: warning-pulse 1.5s infinite;
+        filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.7));
+    }
+    
+    /* Warning animation in header with improved visuals */
+    .warning-animation {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: repeating-linear-gradient(
+            45deg,
+            rgba(0, 0, 0, 0.1),
+            rgba(0, 0, 0, 0.1) 10px,
+            rgba(0, 0, 0, 0.2) 10px,
+            rgba(0, 0, 0, 0.2) 20px
+        );
+        z-index: 0;
+        animation: slide 20s linear infinite;
+        opacity: 0.5;
+    }
+    
+    .card-header h3 {
+        position: relative;
+        z-index: 1;
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        font-weight: 700;
+        letter-spacing: 0.5px;
+    }
+    
+    /* Vehicle info styling with enhanced visual effects */
+    .vehicle-info {
+        border-left: 4px solid #dc3545;
+        transition: all 0.3s ease;
+        background-color: rgba(248, 249, 250, 0.9);
+        position: relative;
+    }
+    
+    .vehicle-info:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Highlight effect for vehicle info */
+    .vehicle-info::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 0;
+        background: linear-gradient(to bottom, rgba(220, 53, 69, 0.1), transparent);
+        transition: height 0.3s ease;
+    }
+    
+    .vehicle-info:hover::before {
+        height: 100%;
+    }
+    
+    .deletion-label {
+        width: 140px;
+        font-weight: 600;
+        color: #495057;
+    }
+    
+    .deletion-value {
+        flex-grow: 1;
+        color: #212529;
+    }
+    
+    /* Enhanced Alert Box */
+    .alert-warning {
+        border-left: 4px solid #ffc107;
+        background-color: rgba(255, 243, 205, 0.8);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    }
+    
+    /* Delete button with improved effects */
+    .delete-btn {
+        position: relative;
+        overflow: hidden;
+        transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        transform-origin: center;
+    }
+    
+    .delete-btn:hover {
+        background-color: #c82333;
+        box-shadow: 0 6px 15px rgba(220, 53, 69, 0.5);
+        transform: translateY(-3px) scale(1.03);
+    }
+    
+    .delete-btn:active {
+        transform: translateY(0) scale(0.98);
+        box-shadow: 0 2px 5px rgba(220, 53, 69, 0.5);
+    }
+    
+    /* Enhanced shine effect */
+    .delete-btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -150%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.4),
+            transparent
+        );
+        transition: 0.6s;
+        z-index: 1;
+    }
+    
+    .delete-btn:hover::before {
+        left: 150%;
+    }
+    
+    /* Cancel button with improved effects */
+    .cancel-btn {
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .cancel-btn:hover {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transform: translateY(-2px);
+    }
+    
+    .cancel-btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.2),
+            transparent
+        );
+        transition: 0.5s;
+        z-index: 1;
+    }
+    
+    .cancel-btn:hover::before {
+        left: 100%;
+    }
+    
+    /* Animation keyframes */
+    @keyframes warning-pulse {
+        0% { transform: scale(1); opacity: 1; }
+        50% { transform: scale(1.2); opacity: 0.9; }
+        100% { transform: scale(1); opacity: 1; }
+    }
+    
+    @keyframes slide {
+        from { background-position: 0 0; }
+        to { background-position: 100% 0; }
+    }
+    
+    @keyframes shake {
+        0% { transform: translateX(0) rotate(0); }
+        20% { transform: translateX(-5px) rotate(-2deg); }
+        40% { transform: translateX(5px) rotate(2deg); }
+        60% { transform: translateX(-5px) rotate(-1deg); }
+        80% { transform: translateX(5px) rotate(1deg); }
+        100% { transform: translateX(0) rotate(0); }
+    }
+    
+    /* Enhanced trashcan animation */
+    .delete-btn:hover .fa-trash-alt {
+        animation: shake 0.6s ease-in-out;
+        transform-origin: bottom center;
+    }
+    
+    /* Improved shredding animation effect for delete operation */
+    .shredding {
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .shredding::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: repeating-linear-gradient(
+            0deg,
+            transparent,
+            transparent 5px,
+            rgba(220, 53, 69, 0.15) 5px,
+            rgba(220, 53, 69, 0.15) 10px
+        );
+        animation: shred 0.7s cubic-bezier(0.36, 0.07, 0.19, 0.97) forwards;
+        pointer-events: none;
+        z-index: 10;
+    }
+    
+    @keyframes shred {
+        0% { height: 0%; opacity: 0.3; }
+        100% { height: 100%; opacity: 0.8; }
+    }
+    
+    /* Enhanced fall down animation for the deletion card */
+    .fall-down {
+        animation: fallDown 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+        pointer-events: none;
+    }
+    
+    @keyframes fallDown {
+        0% { 
+            transform: translateY(0) rotate(0deg); 
+            opacity: 1;
+        }
+        15% {
+            transform: translateY(10px) rotate(2deg);
+            opacity: 0.95;
+        }
+        35% {
+            transform: translateY(70px) rotate(8deg);
+            opacity: 0.8;
+        }
+        65% {
+            transform: translateY(200px) rotate(15deg);
+            opacity: 0.6;
+        }
+        100% { 
+            transform: translateY(1000px) rotate(30deg);
+            opacity: 0;
+        }
+    }
+    
+    /* Fade out overlay effect */
+    .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0);
+        z-index: 1000;
+        pointer-events: none;
+        transition: background-color 1.5s ease;
+    }
+    
+    .overlay.active {
+        background-color: rgba(0, 0, 0, 0.2);
+    }
+    
+    /* Success message animation */
+    .success-message {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0);
+        background-color: #28a745;
+        color: white;
+        padding: 20px 30px;
+        border-radius: 10px;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        z-index: 2000;
+        opacity: 0;
+        transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+    
+    .success-message.show {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
+    
+    /* Pulse effect for interactive elements */
+    .pulse-effect {
+        animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+        0% {
+            box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.4);
+        }
+        70% {
+            box-shadow: 0 0 0 10px rgba(220, 53, 69, 0);
+        }
+        100% {
+            box-shadow: 0 0 0 0 rgba(220, 53, 69, 0);
+        }
+    }
+    
+    /* Focus outlines for accessibility */
+    .btn:focus, .btn:active:focus {
+        box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.5);
+        outline: none;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .deletion-card {
+            margin: 0 10px;
+        }
+        
+        .deletion-label, .deletion-value {
+            width: 100%;
+        }
+        
+        .d-flex {
+            flex-direction: column;
+        }
+        
+        .button-container {
+            flex-direction: column-reverse;
+        }
+        
+        .button-container .btn {
+            margin-bottom: 10px;
+            width: 100%;
+        }
+    }
+    </style>
 </head>
 <body>
+    <!-- Overlay for fade effect -->
+    <div class="overlay" id="overlay"></div>
+    
+    <!-- Success message that appears after deletion -->
+    <div class="success-message" id="successMessage">
+        <i class="fas fa-check-circle fa-3x mb-3"></i>
+        <h4>Successfully Deleted</h4>
+        <p class="mb-0">Redirecting...</p>
+    </div>
 
-    <h2>Are you sure you want to delete "{{ object }}"?</h2>
-<form method="post">
-    {% csrf_token %}
-    <button type="submit">Yes, delete</button>
-    <a href="{% url 'sellers' %}">Cancel</a>
-</form>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-5 col-md-7 col-sm-10">
+                <div class="card shadow border-danger deletion-card animate__animated animate__zoomIn" id="deletionCard">
+                    <div class="card-header bg-danger text-white position-relative overflow-hidden">
+                        <div class="warning-animation"></div>
+                        <h3 class="mb-0 d-flex align-items-center">
+                            <i class="fas fa-exclamation-triangle me-2 warning-icon"></i>
+                            Confirm Deletion
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-warning animate__animated" id="warningAlert">
+                            <i class="fas fa-exclamation-circle me-2"></i>
+                            <strong>Warning:</strong> This action cannot be undone.
+                        </div>
+                        
+                        <div class="vehicle-info p-3 mb-4 rounded" id="vehicleInfo">
+                            <p class="lead fw-bold mb-3">Are you sure you want to delete this Auction?</p>
+                            <div class="deletion-info">
+                                <div class="d-flex mb-2">
+                                    <div class="deletion-label">
+                                       Name:
+                                    </div>
+                                    <div class="deletion-value fw-bold" id="objectName">{{ object }}</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <form method="post" id="deleteForm" action="">
+                            {% csrf_token %}
+                            <div class="d-flex justify-content-between mt-4 button-container">
+                                <a href="{% url 'sellers' %}" class="btn btn-outline-secondary btn-lg px-4 py-2 cancel-btn">
+                                    <i class="fas fa-times me-2"></i>Cancel
+                                </a>
+                                <button type="submit" class="btn btn-danger btn-lg px-4 py-2 delete-btn pulse-effect" id="deleteButton">
+                                    <span class="delete-btn-text">
+                                        <i class="fas fa-trash-alt me-2"></i>Delete Auction
+                                    </span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Elements
+        const deleteForm = document.getElementById('deleteForm');
+        const deleteButton = document.getElementById('deleteButton');
+        const vehicleInfo = document.getElementById('vehicleInfo');
+        const card = document.getElementById('deletionCard');
+        const overlay = document.getElementById('overlay');
+        const successMessage = document.getElementById('successMessage');
+        const warningAlert = document.getElementById('warningAlert');
+        
+        // Initialize animations
+        initializeCardAnimation();
+        
+        // Add warning pulse animation
+        warningAlert.classList.add('animate__pulse', 'animate__infinite');
+        
+        // Set demo object name if empty template
+        const objectName = document.getElementById('objectName');
+        if (objectName.textContent.trim() === '{{ object }}') {
+            objectName.textContent = '{{ object }}';
+        }
+        
+        // Handle form submission with animations
+        deleteForm.addEventListener('submit', function(e) {
+            // Prevent default submission
+            e.preventDefault();
+            
+            // Start delete animation sequence
+            startDeleteAnimation();
+        });
+        
+        // Add interactive effects to delete button
+        deleteButton.addEventListener('mouseover', function() {
+            // Remove pulse effect on hover
+            deleteButton.classList.remove('pulse-effect');
+            
+            // Animate warning alert
+            warningAlert.classList.remove('animate__pulse', 'animate__infinite');
+            warningAlert.classList.add('animate__headShake');
+            
+            setTimeout(() => {
+                warningAlert.classList.remove('animate__headShake');
+                warningAlert.classList.add('animate__pulse', 'animate__infinite');
+            }, 1000);
+        });
+        
+        deleteButton.addEventListener('mouseout', function() {
+            // Re-add pulse effect when not hovering
+            setTimeout(() => {
+                if (!deleteButton.disabled) {
+                    deleteButton.classList.add('pulse-effect'); 
+                }
+            }, 2000);
+        });
+        
+        // Initialize card animation
+        function initializeCardAnimation() {
+            setTimeout(() => {
+                card.classList.add('animate__pulse');
+                
+                setTimeout(() => {
+                    card.classList.remove('animate__pulse');
+                    
+                    // Add pulse effect to delete button after initial animation
+                    deleteButton.classList.add('pulse-effect');
+                }, 1000);
+            }, 1500);
+        }
+        
+        // Delete animation sequence
+        function startDeleteAnimation() {
+            // Disable button and show loading state
+            deleteButton.disabled = true;
+            deleteButton.classList.remove('pulse-effect');
+            deleteButton.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Deleting...';
+            
+            // First stage: Start shredding effect
+            vehicleInfo.classList.add('shredding');
+            
+            // Start fade overlay
+            overlay.classList.add('active');
+            
+            // Second stage: Add fall down animation after shredding
+            setTimeout(() => {
+                // Cancel pulse on warning before fall
+                warningAlert.classList.remove('animate__pulse', 'animate__infinite');
+                
+                // Add fall animation
+                card.classList.add('fall-down');
+                card.classList.remove('animate__zoomIn');
+                
+                // Show success message after card falls
+                setTimeout(() => {
+                    successMessage.classList.add('show');
+                    
+                    // Redirect or submit form after animations complete
+                    setTimeout(() => {
+                        // Here you would normally submit the form
+                        // For demo, we'll just reload after 1.5 seconds
+                        // deleteForm.submit();
+                        
+                        // For demo purposes only - simulates redirect
+                        const urlParams = new URLSearchParams(window.location.search);
+                        if (!urlParams.has('demo')) {
+                            // If in real use, submit the form
+                            deleteForm.submit();
+                        } else {
+                            // For demo reload the page
+                            window.location.href = window.location.href;
+                        }
+                    }, 1500);
+                }, 800);
+            }, 700);
+        }
+        
+        // Add support for demo mode with query parameter ?demo=true
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('demo')) {
+            // Add a small indicator for demo mode
+            const demoIndicator = document.createElement('div');
+            demoIndicator.className = 'position-fixed bottom-0 end-0 m-3 text-secondary';
+            demoIndicator.innerHTML = '<small>Demo Mode</small>';
+            document.body.appendChild(demoIndicator);
+            
+            // Auto-initialize animation cycle for demos
+            setTimeout(() => {
+                deleteButton.focus();
+            }, 2000);
+        }
+    });
+    </script>
+
+
+
+<!-- cursor style  -->
+
+<style>
+    body {
+        cursor: none; /* <--- Hide default pointer */
+    }
+    .form-container {
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    
+    /* Custom cursor styles */
+    .custom-cursor {
+        position: fixed;
+        width: 70px;
+        height: 70px;
+        background: radial-gradient(circle, rgba(13,110,253,1) 70%, transparent 70%),
+                    radial-gradient(circle, rgba(13,110,253,1) 70%, transparent 70%);
+        background-size: 100% 100%;
+        background-repeat: no-repeat;
+        pointer-events: none;
+        z-index: 9999;
+        transform: translate(-50%, -50%) rotate(45deg);
+        transition: transform 0.1s ease, width 0.3s ease, height 0.3s ease, background-color 0.3s ease;
+        mix-blend-mode: difference;
+        display: none;
+        clip-path: polygon(
+            50% 0%,
+            61% 35%,
+            98% 35%,
+            68% 57%,
+            79% 91%,
+            50% 70%,
+            21% 91%,
+            32% 57%,
+            2% 35%,
+            39% 35%
+        );
+    }
+    
+    /* Glow effect for cursor trail */
+    .cursor-trail {
+        position: fixed;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background-color: rgba(13, 110, 253, 0.3);
+        pointer-events: none;
+        z-index: 9998;
+        transform: translate(-50%, -50%);
+        transition: opacity 0.5s ease;
+        opacity: 0;
+        display: none; /* Initially hidden, shown with JS */
+    }
+    
+    /* Animated hover effects for navbar links */
+    .navbar-nav .nav-link {
+        position: relative;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        padding: 8px 15px;
+        overflow: hidden;
+    }
+    
+    .navbar-nav .nav-link:hover {
+        color: #0d6efd;
+        transform: translateY(-2px);
+    }
+    
+    .navbar-nav .nav-link::before {
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(13, 110, 253, 0.1);
+        top: 0;
+        left: -100%;
+        transition: all 0.3s ease;
+        z-index: -1;
+        border-radius: 4px;
+    }
+    
+    .navbar-nav .nav-link:hover::before {
+        left: 0;
+    }
+    
+    .navbar-nav .nav-link::after {
+        content: '';
+        position: absolute;
+        width: 0;
+        height: 2px;
+        bottom: 0;
+        left: 50%;
+        background-color: #0d6efd;
+        transition: width 0.3s ease, left 0.3s ease;
+    }
+    
+    .navbar-nav .nav-link:hover::after {
+        width: 100%;
+        left: 0;
+    }
+    
+    /* Hover effect for navbar brand */
+    .navbar-brand {
+        transition: all 0.3s ease;
+        cursor: pointer;
+        position: relative;
+        padding: 5px 10px;
+    }
+    
+    .navbar-brand:hover {
+        color: #0d6efd;
+        text-shadow: 0 0 5px rgba(13, 110, 253, 0.3);
+    }
+    
+    /* Animated highlight effect for interactable elements */
+    .nav-item:hover .custom-cursor {
+        width: 50px;
+        height: 50px;
+        background-color: rgba(13, 110, 253, 0.7);
+    }
+</style>
+
+
+
+   <!-- Custom cursor effect script -->
+   <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const cursor = document.querySelector('.custom-cursor');
+        const trail = document.querySelector('.cursor-trail');
+        const trails = [];
+        const trailCount = 5;
+        
+        // Create multiple trail elements
+        for (let i = 0; i < trailCount; i++) {
+            const newTrail = trail.cloneNode(true);
+            document.body.appendChild(newTrail);
+            trails.push(newTrail);
+            newTrail.style.display = 'block';
+        }
+        
+        // Show main cursor
+        cursor.style.display = 'block';
+        
+        // Track mouse position
+        let mouseX = 0;
+        let mouseY = 0;
+        let cursorX = 0;
+        let cursorY = 0;
+        
+        // Store previous positions for trail effect
+        const trailPositions = Array(trailCount).fill().map(() => ({x: 0, y: 0}));
+        
+        document.addEventListener('mousemove', function(e) {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            
+            // Check if hovering over interactive elements
+            const target = e.target;
+            const isInteractive = 
+                target.classList.contains('nav-link') || 
+                target.classList.contains('navbar-brand') ||
+                target.classList.contains('btn');
+            
+            if (isInteractive) {
+                cursor.style.width = '30px';
+                cursor.style.height = '30px';
+                cursor.style.backgroundColor = 'rgba(13, 110, 253, 0.7)';
+            } else {
+                cursor.style.width = '20px';
+                cursor.style.height = '20px';
+                cursor.style.backgroundColor = 'rgba(13, 110, 253, 0.5)';
+            }
+        });
+        
+        // Animation loop for smooth cursor following
+        function animateCursor() {
+            // Smooth cursor following with easing
+            const easing = 0.2;
+            cursorX += (mouseX - cursorX) * easing;
+            cursorY += (mouseY - cursorY) * easing;
+            
+            cursor.style.left = cursorX + 'px';
+            cursor.style.top = cursorY + 'px';
+            
+            // Update trail positions
+            for (let i = trails.length - 1; i > 0; i--) {
+                trailPositions[i].x = trailPositions[i-1].x;
+                trailPositions[i].y = trailPositions[i-1].y;
+            }
+            
+            // Lead trail follows the cursor with delay
+            trailPositions[0].x = cursorX;
+            trailPositions[0].y = cursorY;
+            
+            // Update trail elements positions
+            trails.forEach((trail, index) => {
+                const delay = index * 50;
+                setTimeout(() => {
+                    trail.style.left = trailPositions[index].x + 'px';
+                    trail.style.top = trailPositions[index].y + 'px';
+                    trail.style.opacity = 0.7 - (index * 0.1);
+                }, delay);
+            });
+            
+            requestAnimationFrame(animateCursor);
+        }
+        
+        animateCursor();
+        
+        // Add pulse animation when clicking
+        document.addEventListener('mousedown', function() {
+            cursor.style.transform = 'translate(-50%, -50%) scale(0.7)';
+        });
+        
+        document.addEventListener('mouseup', function() {
+            cursor.style.transform = 'translate(-50%, -50%) scale(1)';
+        });
+    });
+</script>
+
+
+<!-- Custom cursor elements -->
+<div class="custom-cursor"></div>
+<div class="cursor-trail"></div>
+
+
+
+<style>
+    /* Enhanced Background */
+    .hero-headers {
+        background: linear-gradient(135deg, #f9f0e1 0%, #e0c097 100%);
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    
+    /* Animated background pattern */
+    .hero-headers::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: 
+            radial-gradient(circle at 25% 25%, rgba(255,255,255,0.2) 0%, transparent 10%),
+            radial-gradient(circle at 75% 75%, rgba(255,255,255,0.2) 0%, transparent 10%),
+            radial-gradient(circle at 50% 50%, rgba(255,255,255,0.2) 0%, transparent 10%);
+        background-size: 50px 50px;
+        animation: backgroundMove 30s infinite linear;
+        opacity: 0.5;
+    }
+    
+    @keyframes backgroundMove {
+        0% { background-position: 0 0; }
+        100% { background-position: 100px 100px; }
+    }
+    
+    /* Animated text effects */
+    .animated-text {
+        display: inline-block;
+        position: relative;
+        color: #442913;
+        font-weight: 600;
+        animation: colorShift 4s infinite alternate;
+    }
+    
+    @keyframes colorShift {
+        0% { color: #442913; }
+        50% { color: #a05c17; }
+        100% { color: #442913; }
+    }
+    
+    .highlight-text {
+        position: relative;
+        display: inline-block;
+        font-weight: 700;
+        color: #2d1d0e;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .highlight-text::after {
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 5px;
+        bottom: 0;
+        left: 0;
+        background-color: rgba(160, 92, 23, 0.5);
+        transform: scaleX(0);
+        transform-origin: bottom right;
+        transition: transform 0.5s ease-out;
+        animation: highlightBar 6s infinite;
+    }
+    
+    @keyframes highlightBar {
+        0% { transform: scaleX(0); transform-origin: bottom right; }
+        50% { transform: scaleX(1); transform-origin: bottom left; }
+        100% { transform: scaleX(0); transform-origin: bottom right; }
+    }
+    
+    /* Pulse animation for button */
+    .pulse-btn {
+        animation: pulse 2s infinite;
+        background-color: #c17a21 !important;
+        border-color: #8a5517 !important;
+        transition: all 0.3s ease;
+    }
+    
+    .pulse-btn:hover {
+        animation: none;
+        background-color: #8a5517 !important;
+        transform: scale(1.05);
+    }
+    
+    @keyframes pulse {
+        0% { box-shadow: 0 0 0 0 rgba(193, 122, 33, 0.7); }
+        70% { box-shadow: 0 0 0 10px rgba(193, 122, 33, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(193, 122, 33, 0); }
+    }
+    
+    /* Enhanced marquee */
+    .enhanced-marquee {
+        color: #8a5517;
+        font-weight: 600;
+        background-color: rgba(249, 240, 225, 0.7);
+        padding: 10px;
+        border-radius: 8px;
+        border-left: 4px solid #c17a21;
+        border-right: 4px solid #c17a21;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    
+    /* Fade-in text animation */
+    .fade-in-text {
+        position: relative;
+        color: #442913;
+        animation: fadeIn 1.5s ease-in-out;
+        border-bottom: 3px solid #c17a21;
+        display: inline-block;
+        padding-bottom: 5px;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    /* Card hover effects */
+    .hover-card {
+        transition: all 0.3s ease;
+        border: 1px solid #e6c9a8;
+        background-color: #fff;
+        overflow: hidden;
+    }
+    
+    .hover-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 10px 20px rgba(193, 122, 33, 0.2);
+        border-color: #c17a21;
+    }
+    
+    /* Spice image effects */
+    .spice-image {
+        transition: all 0.5s ease;
+        object-fit: cover;
+    }
+    
+    .hover-card:hover .spice-image {
+        transform: scale(1.08);
+    }
+    
+    /* Bid button animation */
+    .bid-button {
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        z-index: 1;
+    }
+    
+    .bid-button::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(193, 122, 33, 0.2), transparent);
+        transition: all 0.5s ease;
+        z-index: -1;
+    }
+    
+    .bid-button:hover::before {
+        left: 100%;
+        animation: shine 1.5s infinite;
+    }
+    
+    @keyframes shine {
+        0% { left: -100%; }
+        100% { left: 100%; }
+    }
+    
+    .bid-button:hover {
+        background-color: #c17a21;
+        color: white !important;
+        border-color: #8a5517;
+    }
+    
+    /* Zoom effect for carousel images */
+    .zoom-effect {
+        transition: transform 10s ease;
+        transform-origin: center;
+    }
+    
+    .carousel-item.active .zoom-effect {
+        animation: slowZoom 15s infinite alternate;
+    }
+    
+    @keyframes slowZoom {
+        0% { transform: scale(1); }
+        100% { transform: scale(1.1); }
+    }
+    
+    /* Floating spice elements */
+    .spice-floater {
+        position: fixed;
+        width: 30px;
+        height: 30px;
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+        opacity: 0.3;
+        z-index: -1;
+        pointer-events: none;
+    }
+    
+    .spice-1 {
+        top: 10%;
+        left: 5%;
+        background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="%23c17a21"/></svg>');
+        animation: float1 15s infinite linear;
+    }
+    
+    .spice-2 {
+        top: 20%;
+        right: 10%;
+        background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><polygon points="50,10 90,90 10,90" fill="%23a05c17"/></svg>');
+        animation: float2 18s infinite linear;
+    }
+    
+    .spice-3 {
+        bottom: 15%;
+        left: 15%;
+        background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect x="20" y="20" width="60" height="60" fill="%238a5517"/></svg>');
+        animation: float3 20s infinite linear;
+    }
+    
+    .spice-4 {
+        bottom: 25%;
+        right: 20%;
+        background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="30" stroke="%23442913" stroke-width="5" fill="none"/></svg>');
+        animation: float4 25s infinite linear;
+    }
+    
+    .spice-5 {
+        top: 50%;
+        left: 50%;
+        background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M20,50 Q50,20 80,50 Q50,80 20,50" fill="%23a05c17"/></svg>');
+        animation: float5 22s infinite linear;
+    }
+    
+    @keyframes float1 {
+        0% { transform: translate(0, 0) rotate(0deg); }
+        50% { transform: translate(100px, 50px) rotate(180deg); }
+        100% { transform: translate(0, 0) rotate(360deg); }
+    }
+    
+    @keyframes float2 {
+        0% { transform: translate(0, 0) rotate(0deg); }
+        50% { transform: translate(-70px, 100px) rotate(-180deg); }
+        100% { transform: translate(0, 0) rotate(-360deg); }
+    }
+    
+    @keyframes float3 {
+        0% { transform: translate(0, 0) rotate(0deg) scale(1); }
+        50% { transform: translate(120px, -80px) rotate(180deg) scale(1.5); }
+        100% { transform: translate(0, 0) rotate(360deg) scale(1); }
+    }
+    
+    @keyframes float4 {
+        0% { transform: translate(0, 0) rotate(0deg) scale(0.8); }
+        50% { transform: translate(-90px, -40px) rotate(-180deg) scale(1.2); }
+        100% { transform: translate(0, 0) rotate(-360deg) scale(0.8); }
+    }
+    
+    @keyframes float5 {
+        0% { transform: translate(0, 0) rotate(0deg) scale(1); }
+        33% { transform: translate(50px, -50px) rotate(120deg) scale(0.7); }
+        66% { transform: translate(-50px, 50px) rotate(240deg) scale(1.3); }
+        100% { transform: translate(0, 0) rotate(360deg) scale(1); }
+    }
+    
+    /* Original marquee styles - adjusted to match new design */
+    article {
+        max-width: auto;
+        margin: 1em auto;
+        overflow: hidden;
+        position: relative;
+        min-height: 2em;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+    
+    .example-left {
+        white-space: nowrap;
+        position: absolute;
+        text-transform: uppercase;
+        animation: mymove 8s linear infinite alternate;
+    }
+    
+    @keyframes mymove {
+        from { left: 0; }
+        to { left: -140px; }
+    }
+    
+    .example-right {
+        white-space: nowrap;
+        position: absolute;
+        top: 2em;
+        opacity: .4;
+        text-transform: uppercase;
+        animation: urmove 8s linear infinite alternate;
+    }
+    
+    @keyframes urmove {
+        from { right: 0; }
+        to { right: -140px; }
+    }
+    
+    .early {
+        animation: fadeIn ease-in 1;
+        animation-fill-mode: forwards;
+        animation-duration: 1s;
+        animation-delay: 1.5s;
+    }
+    
+    @keyframes early {
+        from { opacity: 1; }
+        to { opacity: 0; }
+    }
+  </style>
+  
+  
+  
+      <!-- Floating decorative elements -->
+      <div class="spice-floater spice-1"></div>
+      <div class="spice-floater spice-2"></div>
+      <div class="spice-floater spice-3"></div>
+      <div class="spice-floater spice-1"></div>
+      <div class="spice-floater spice-2"></div>
+      <div class="spice-floater spice-3"></div>
+
 
 </body>
 </html>

@@ -23,8 +23,8 @@ class Seller(CustomUser):
     phone = models.CharField(max_length=100)
     email_address = models.EmailField()
     address = models.CharField(max_length=100)
-    id_proof = models.FileField(null=True, upload_to="images")
-    profile = models.ImageField(upload_to="images", null=True)
+    id_proof = models.FileField(null=True, upload_to="images",blank=True)
+    profile = models.ImageField(upload_to="images", null=True, blank=True)
     is_available = models.BooleanField(default=True)
 
     def __str__(self):
@@ -46,7 +46,6 @@ class Spice(models.Model):
     def __str__(self):
         return self.name 
 
-
 class Auction(models.Model):
     spice = models.ForeignKey(Spice, on_delete=models.CASCADE)
     auctioneer = models.ForeignKey(Seller, on_delete=models.CASCADE)
@@ -62,7 +61,8 @@ class Auction(models.Model):
     ]
     status=models.CharField(max_length=50, choices=choices, default='Available')
 
-    
+    def __str__(self):
+        return self.spice.name
 
 class Bid(models.Model):
     auction = models.ForeignKey(Auction, on_delete=models.CASCADE)
@@ -74,15 +74,12 @@ class Bid(models.Model):
     def __str__(self):
         return f"Bid of {self.amount} by {self.bidder.username}"
 
-
 class Payment(models.Model):
     bid = models.ForeignKey(Bid, on_delete=models.CASCADE)
     user = models.ForeignKey(Seller, on_delete=models.CASCADE)
     payment_mode=models.CharField(max_length=50,default='Online')
     timestamp = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=10, choices=[("pending", "Pending"), ("completed", "Completed")], default="pending")
-
-
 
 class Feedbacks(models.Model):
     user = models.ForeignKey(Seller, on_delete=models.CASCADE)
@@ -93,8 +90,6 @@ class Feedbacks(models.Model):
     def __str__(self):
         return f"feedback {self.comment} by {self.user}"
 
-
- 
 class BidPurchase(models.Model):
     bid = models.ForeignKey(Bid, on_delete=models.CASCADE)
     purchase_date = models.DateTimeField(auto_now_add=True)

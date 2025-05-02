@@ -7,6 +7,7 @@ urlpatterns = [
     path('signup/',views.RegView.as_view(),name="signup"),
     path('signin/',views.SignInView.as_view(),name="signin"),
     path('logout/',views.logoutuser,name="logout"),
+    path('profile/', views.ProfileUpdateView.as_view(), name='profile'),
     path("auctions/",views.AuctionsListView.as_view(),name="auctions-list"),
     path("bid/",views.bids_list_view,name="bid-list"),
     path("products/",views.ProductsListView.as_view(),name="products-list"),
@@ -23,6 +24,9 @@ urlpatterns = [
     path('card_input/<int:bid_id>/', views.card_input, name='card_input'),
     path('payment/success/', views.payment_success, name='payment_success'),
     path('', views.landingpage, name='index'),
+    path('forgot-password/', views.forgot_password, name='forgot_password'),
+    path('reset-password/<uidb64>/<token>/', views.password_reset_confirm, name='password_reset_confirm'),
+
     
 
 

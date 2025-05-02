@@ -2,9 +2,9 @@ from django.shortcuts import render,redirect
 from django.views import View
 from adminapi.models import Seller,Spice,Bid,Auction,Payment,Feedbacks,CustomUser,BidPurchase
 from django.contrib import messages
-from django.views.generic import CreateView,FormView,ListView
+from django.views.generic import CreateView,FormView,ListView,UpdateView
 from django.urls import reverse_lazy
-from userapi.forms import RegForm,LoginForm,AddProducts,AddAuction,AddBid,AddFeedback
+from userapi.forms import RegForm,LoginForm,AddProducts,AddAuction,AddBid,AddFeedback,ProfileUpdateForm
 from django.contrib.auth import authenticate,login,logout
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
@@ -80,6 +80,42 @@ class RegView(CreateView):
         form.instance.user_type = 'Seller'
         return super().form_valid(form)   
  
+class ProfileUpdateView(UpdateView):
+    template_name = "user/profile.html"
+    model = Seller
+    form_class = ProfileUpdateForm
+    success_url = reverse_lazy("profile")
+    
+    def get_object(self, queryset=None):
+        """Get the Seller object for the current user"""
+        return get_object_or_404(Seller, id=self.request.user.id)
+    
+    def post(self, request, *args, **kwargs):
+        """Override post method to ensure data is saved"""
+        self.object = self.get_object()
+        
+        # Debug print to see what's coming in the POST data
+        print(f"POST data: {request.POST}")
+        print(f"FILES data: {request.FILES}")
+        
+        # Get the form and populate it with the data
+        form = self.form_class(request.POST, instance=self.object, files=request.FILES)
+        
+        if form.is_valid():
+            seller = form.save()
+            messages.success(request, "Profile updated successfully")
+            return redirect(self.success_url)
+        else:
+            print(f"Form errors: {form.errors}")
+            messages.error(request, f"Profile update failed. Please check the form for errors: {form.errors}")
+            return self.render_to_response(self.get_context_data(form=form))
+    
+    def get_context_data(self, **kwargs):
+        """Add additional context data"""
+        context = super().get_context_data(**kwargs)
+        context['user'] = self.get_object()  # This ensures 'user' is available in the template
+        return context
+
 # class SignInView(FormView):
 #     template_name="user/loginpage.html"
 #     form_class=LoginForm
@@ -490,3 +526,105 @@ def card_input(request, bid_id):
 
 def payment_success(request):
     return render(request, 'user/success.html') 
+
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes, force_str
+from django.contrib.auth.tokens import default_token_generator
+from django.urls import reverse
+from .models import CustomUser 
+
+def forgot_password(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        try:
+            user = CustomUser.objects.get(email=email)
+            
+            # Generate token and uid
+            token = default_token_generator.make_token(user)
+            uid = urlsafe_base64_encode(force_bytes(user.pk))
+            
+            # Build reset URL
+            reset_url = request.build_absolute_uri(
+                reverse('password_reset_confirm', kwargs={'uidb64': uid, 'token': token})
+            )
+            
+            # Prepare email
+            subject = 'Password Reset Request'
+            email_template = 'user/reset_password_email.html'
+            email_context = {
+                'user': user,
+                'reset_url': reset_url,
+                'site_name': 'TRAVELIX',
+            }
+            
+            html_message = render_to_string(email_template, email_context)
+            plain_message = f"Hi {user.username}, click this link to reset your password: {reset_url}"
+            
+            # Send email
+            send_mail(
+                subject,
+                plain_message,
+                'noreply@yourwebsite.com',
+                [email],
+                html_message=html_message,
+                fail_silently=False
+            )
+            
+            messages.success(request, "Password reset link has been sent to your email.")
+            return redirect('signin')
+            
+        except CustomUser.DoesNotExist:
+            messages.error(request, "No account found with that email address.")
+    
+    return render(request, 'user/forgot_password.html')
+
+def password_reset_confirm(request, uidb64, token):
+    try:
+        # Decode the user id
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = CustomUser.objects.get(pk=uid)
+        
+        # Verify token
+        if not default_token_generator.check_token(user, token):
+            messages.error(request, "Password reset link is invalid or has expired.")
+            return redirect('forgot_password')
+        
+        if request.method == 'POST':
+            password1 = request.POST.get('password1')
+            password2 = request.POST.get('password2')
+            
+            if password1 != password2:
+                messages.error(request, "Passwords don't match.")
+                return render(request, 'user/password_reset_confirm.html')
+            
+            # Set new password
+            user.set_password(password1)
+            user.save()
+            
+            messages.success(request, "Password has been reset successfully. You can now log in with your new password.")
+            return redirect('signin')
+            
+        return render(request, 'user/password_reset_confirm.html')
+        
+    except (TypeError, ValueError, OverflowError, CustomUser.DoesNotExist):
+        messages.error(request, "Password reset link is invalid.")
+        return redirect('forgot_password')
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+

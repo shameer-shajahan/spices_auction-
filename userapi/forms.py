@@ -2,6 +2,9 @@ from django import forms
 from  adminapi.models import Seller,Spice,Auction,Bid,Payment,Feedbacks
 from django.contrib.auth.forms import UserCreationForm
 from userapi.models import Card
+from django.contrib.auth import password_validation
+from django.core.exceptions import ValidationError
+
 
 
 class RegForm(UserCreationForm):
@@ -20,10 +23,51 @@ class RegForm(UserCreationForm):
         }
         
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        for field in self.fields.values():
-            field.help_text = None
+        super(RegForm, self).__init__(*args, **kwargs)
+        # Make some fields optional if needed
+        self.fields['phone'].required = False
+        self.fields['address'].required = False
+        self.fields['profile'].required = False
+        self.fields['id_proof'].required = False
+        
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        username = self.cleaned_data.get('username')
+        
+        # If the email has changed, check if it's already in use by another user
+        if email and Seller.objects.filter(email=email).exclude(username=username).exists():
+            raise forms.ValidationError('Email address is already in use by another account.')
+        return email
+    
+    def clean_username(self):
+        username = self.cleaned_data.get('username')
+        
+        # If the username has changed, check if it's already in use
+        if username and Seller.objects.filter(username=username).exclude(pk=self.instance.pk).exists():
+            raise forms.ValidationError('Username is already taken.')
+        return username
 
+class ProfileUpdateForm(forms.ModelForm):
+    """Form for updating seller profile"""
+    
+    class Meta:
+        model = Seller
+        fields = ['name', 'username', 'email_address', 'phone', 'address', 'profile', 'id_proof']
+        
+    # If needed, explicitly define the email_address field to ensure it's handled correctly
+    email_address = forms.EmailField(required=True)
+    
+    def clean_email_address(self):
+        """Validate that the email is not already in use by another user"""
+        email_address = self.cleaned_data.get('email_address')
+        user_id = self.instance.id if self.instance else None
+        
+        # Check if email exists but exclude the current user
+        if Seller.objects.filter(email_address=email_address).exclude(id=user_id).exists():
+            raise ValidationError("Email address is already in use by another account.")
+        
+        return email_address
+    
 class LoginForm(forms.Form):
     username=forms.CharField()
     password=forms.CharField(widget=forms.PasswordInput)
