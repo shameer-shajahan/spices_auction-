@@ -65,10 +65,15 @@ class SignInView(FormView):
             
                 except CustomUser.DoesNotExist:
                     # Fallback if profile doesn't exist
-                    return redirect('user_dashboard')
+                    messages.error(request, "User profile not found.")
+                    return redirect('signin')
             else:
+                # Invalid credentials
+                messages.error(request, "Invalid username or password. Please try again.")
                 return redirect('signin')
         else:
+            # Form validation failed
+            messages.error(request, "Please enter valid username and password.")
             return redirect('signin')
 
 class RegView(CreateView):

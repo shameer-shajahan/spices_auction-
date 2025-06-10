@@ -669,6 +669,18 @@
                                         <p class="greeting-text">Enjoy your favorite brews with just a few clicks. Your
                                             coffee journey continues here.</p>
 
+                                        <p class="greeting-text">
+                                           
+                                            {% if messages %}
+                                                {% for message in messages %}
+                                                    <div class="alert alert-{{ message.tags }}">
+                                                        {{ message }}
+                                                    </div>
+                                                {% endfor %}
+                                            {% endif %}
+
+                                        </p>
+
                                         <!-- Error/Success message box -->
                                         <div id="loginMessageBox" class="message-box error-message">
                                             Error message goes here
