@@ -1,0 +1,540 @@
+{% extends 'user/base.html' %}
+{% load static %}
+
+{% block body_block %}
+<div class="order-detail-container">
+  <!-- Header Section -->
+  <div class="page-headerr">
+    <div class="header-content">
+
+      <h1 class="page-title">Order Details</h1>
+      <div class="order-status">
+        <span class="status-badge status-{{ order.shipping_status|lower }}">
+          {{ order.shipping_status|capfirst }}
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Order Information Cards -->
+  <div class="info-grid">
+    <!-- Auction Details Card -->
+    <div class="info-card">
+      <div class="card-header">
+        <h3 class="card-title">
+          <span class="card-icon">🏷️</span>
+          Auction Details
+        </h3>
+      </div>
+      <div class="card-content">
+        <div class="detail-row">
+          <span class="detail-label">Item</span>
+          <span class="detail-value">{{ order.bid.auction.title }}</span>
+        </div>
+        {% if order.bid.amount %}
+        <div class="detail-row">
+          <span class="detail-label">Winning Bid</span>
+          <span class="detail-value">${{ order.bid.amount }}</span>
+        </div>
+        {% endif %}
+        <div class="detail-row">
+          <span class="detail-label">Purchase Date</span>
+          <span class="detail-value">{{ order.purchase_date|date:"F d, Y at g:i A" }}</span>
+        </div>
+        {% if order.bid.auction.description %}
+        <div class="detail-row">
+          <span class="detail-label">Description</span>
+          <span class="detail-value">{{ order.bid.auction.description|truncatewords:20 }}</span>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Shipping Information Card -->
+    <div class="info-card">
+      <div class="card-header">
+        <h3 class="card-title">
+          <span class="card-icon">📦</span>
+          Shipping Information
+        </h3>
+      </div>
+      <div class="card-content">
+        <div class="detail-row">
+          <span class="detail-label">Status</span>
+          <span class="detail-value">
+            <span class="status-badge status-{{ order.shipping_status|lower }}">
+              {{ order.shipping_status|capfirst }}
+            </span>
+          </span>
+        </div>
+        {% if order.tracking_number %}
+        <div class="detail-row">
+          <span class="detail-label">Tracking Number</span>
+          <span class="detail-value tracking-number">{{ order.tracking_number }}</span>
+        </div>
+        {% endif %}
+        {% if order.estimated_delivery %}
+        <div class="detail-row">
+          <span class="detail-label">Estimated Delivery</span>
+          <span class="detail-value">{{ order.estimated_delivery|date:"F d, Y" }}</span>
+        </div>
+        {% endif %}
+        {% if order.shipped_date %}
+        <div class="detail-row">
+          <span class="detail-label">Shipped Date</span>
+          <span class="detail-value">{{ order.shipped_date|date:"F d, Y" }}</span>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Delivery Agent Card -->
+    {% if order.delivery_agent %}
+    <div class="info-card">
+      <div class="card-header">
+        <h3 class="card-title">
+          <span class="card-icon">🚚</span>
+          Delivery Agent
+        </h3>
+      </div>
+      <div class="card-content">
+        <div class="detail-row">
+          <span class="detail-label">Agent Name</span>
+          <span class="detail-value">{{ order.delivery_agent.name }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Phone</span>
+          <span class="detail-value">
+            <a href="tel:{{ order.delivery_agent.phone }}" class="contact-link">
+              {{ order.delivery_agent.phone }}
+            </a>
+          </span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Email</span>
+          <span class="detail-value">
+            <a href="mailto:{{ order.delivery_agent.email_address }}" class="contact-link">
+              {{ order.delivery_agent.email_address }}
+            </a>
+          </span>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Order Timeline Card -->
+    <div class="info-card timeline-card">
+      <div class="card-header">
+        <h3 class="card-title">
+          <span class="card-icon">📅</span>
+          Order Timeline
+        </h3>
+      </div>
+      <div class="card-content">
+        <div class="timeline">
+          <div class="timeline-item completed">
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+              <h4>Order Placed</h4>
+              <p>{{ order.purchase_date|date:"F d, Y at g:i A" }}</p>
+            </div>
+          </div>
+          
+          {% if order.shipping_status != 'processing' %}
+          <div class="timeline-item completed">
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+              <h4>Order Confirmed</h4>
+              <p>Payment processed successfully</p>
+            </div>
+          </div>
+          {% endif %}
+
+          {% if order.shipping_status == 'shipped' or order.shipping_status == 'delivered' %}
+          <div class="timeline-item completed">
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+              <h4>Shipped</h4>
+              <p>{% if order.shipped_date %}{{ order.shipped_date|date:"F d, Y" }}{% else %}In transit{% endif %}</p>
+            </div>
+          </div>
+          {% endif %}
+
+          {% if order.shipping_status == 'delivered' %}
+          <div class="timeline-item completed">
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+              <h4>Delivered</h4>
+              <p>{% if order.delivered_date %}{{ order.delivered_date|date:"F d, Y" }}{% else %}Successfully delivered{% endif %}</p>
+            </div>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="action-section">
+    <a href="{% url 'user_order_list' %}" class="btn btn-secondary">
+      <span class="btn-icon">←</span>
+      Back to Orders
+    </a>
+    
+    {% if order.shipping_status == 'shipped' and order.tracking_number %}
+    <a href="#" class="btn btn-primary" onclick="trackPackage('{{ order.tracking_number }}')">
+      <span class="btn-icon">🔍</span>
+      Track Package
+    </a>
+    {% endif %}
+    
+    {% if order.shipping_status == 'delivered' %}
+    <a href="{%url 'feedback-add' %}" class="btn btn-primary">
+      <span class="btn-icon">⭐</span>
+      Leave Review
+    </a>
+    {% endif %}
+    
+    <a href="#" class="btn btn-outline" onclick="printOrder()">
+      <span class="btn-icon">🖨️</span>
+      Print Order
+    </a>
+  </div>
+</div>
+
+<style>
+  .order-detail-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+
+  .page-headerr {
+    margin-top: 10rem;
+    margin-bottom: 2rem;
+  }
+
+  .header-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+  }
+
+  .breadcrumb-link {
+    color: #3b82f6;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .breadcrumb-link:hover {
+    color: #2563eb;
+  }
+
+  .breadcrumb-separator {
+    color: #9ca3af;
+  }
+
+  .breadcrumb-current {
+    color: #6b7280;
+  }
+
+  .page-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin: 0;
+  }
+
+  .order-status {
+    align-self: flex-start;
+  }
+
+  .status-badge {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+  }
+
+  .status-processing {
+    background-color: #fef3c7;
+    color: #92400e;
+  }
+
+  .status-shipped {
+    background-color: #e0e7ff;
+    color: #5b21b6;
+  }
+
+  .status-delivered {
+    background-color: #d1fae5;
+    color: #065f46;
+  }
+
+  .status-returned {
+    background-color: #fee2e2;
+    color: #991b1b;
+  }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+  }
+
+  .info-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: box-shadow 0.2s ease;
+  }
+
+  .info-card:hover {
+    box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.1);
+  }
+
+  .card-header {
+    padding: 1.5rem;
+    color: white;
+  }
+
+  .card-title {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .card-icon {
+    font-size: 1.5rem;
+  }
+
+  .card-content {
+    padding: 1.5rem;
+  }
+
+  .detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #f3f4f6;
+  }
+
+  .detail-row:last-child {
+    border-bottom: none;
+  }
+
+  .detail-label {
+    font-weight: 500;
+    color: #6b7280;
+    flex-shrink: 0;
+    margin-right: 1rem;
+  }
+
+  .detail-value {
+    font-weight: 600;
+    color: #1f2937;
+    text-align: right;
+    flex-grow: 1;
+    word-break: break-word;
+  }
+
+  .tracking-number {
+    font-family: monospace;
+    background: #f3f4f6;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+  }
+
+  .contact-link {
+    color: #3b82f6;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .contact-link:hover {
+    color: #2563eb;
+    text-decoration: underline;
+  }
+
+
+
+  .timeline {
+    position: relative;
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 12px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #e5e7eb;
+  }
+
+  .timeline-item {
+    position: relative;
+    padding-left: 3rem;
+    margin-bottom: 2rem;
+  }
+
+  .timeline-item:last-child {
+    margin-bottom: 0;
+  }
+
+  .timeline-dot {
+    position: absolute;
+    left: -6px;
+    top: 0.25rem;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #d1d5db;
+    border: 3px solid white;
+    box-shadow: 0 0 0 3px #e5e7eb;
+  }
+
+  .timeline-item.completed .timeline-dot {
+    background: #10b981;
+    box-shadow: 0 0 0 3px #d1fae5;
+  }
+
+  .timeline-content h4 {
+    margin: 0 0 0.25rem 0;
+    font-weight: 600;
+    color: #1f2937;
+  }
+
+  .timeline-content p {
+    margin: 0;
+    color: #6b7280;
+    font-size: 0.9rem;
+  }
+
+  .action-section {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 2rem 0;
+    border-top: 1px solid #e5e7eb;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    border: none;
+    font-size: 0.875rem;
+  }
+
+  .btn-primary {
+    background-color: #3b82f6;
+    color: white;
+  }
+
+  .btn-primary:hover {
+    background-color: #2563eb;
+    transform: translateY(-1px);
+  }
+
+  .btn-secondary {
+    background-color: #6b7280;
+    color: white;
+  }
+
+  .btn-secondary:hover {
+    background-color: #4b5563;
+    transform: translateY(-1px);
+  }
+
+  .btn-outline {
+    background-color: transparent;
+    color: #3b82f6;
+    border: 2px solid #3b82f6;
+  }
+
+  .btn-outline:hover {
+    background-color: #3b82f6;
+    color: white;
+    transform: translateY(-1px);
+  }
+
+  .btn-icon {
+    font-size: 1rem;
+  }
+
+  @media (max-width: 768px) {
+    .order-detail-container {
+      padding: 1rem;
+    }
+
+    .info-grid {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+
+    .page-title {
+      font-size: 2rem;
+    }
+
+    .detail-row {
+      flex-direction: column;
+      gap: 0.25rem;
+      align-items: flex-start;
+    }
+
+    .detail-value {
+      text-align: left;
+    }
+
+    .action-section {
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .btn {
+      width: 100%;
+      justify-content: center;
+      max-width: 300px;
+    }
+  }
+</style>
+
+<script>
+  function trackPackage(trackingNumber) {
+    // You can integrate with actual tracking APIs here
+    alert('Tracking number: ' + trackingNumber + '\n\nRedirecting to tracking page...');
+    // window.open('https://trackingurl.com/track/' + trackingNumber, '_blank');
+  }
+
+  function printOrder() {
+    window.print();
+  }
+</script>
+
+{% endblock %}

@@ -1,0 +1,334 @@
+{% extends 'delivery/base.html' %}
+
+{% block title %}Order #{{ order.id }} Details - DeliveryHub{% endblock %}
+
+{% block extra_css %}
+<style>
+    .order-details-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 15px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+    }
+    
+    .order-details-card h2 {
+        margin-bottom: 1.5rem;
+        font-weight: 600;
+    }
+    
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .info-item {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 1rem;
+        border-radius: 10px;
+        backdrop-filter: blur(10px);
+    }
+    
+    .info-label {
+        font-size: 0.9rem;
+        opacity: 0.8;
+        margin-bottom: 0.5rem;
+    }
+    
+    .info-value {
+        font-size: 1.1rem;
+        font-weight: 600;
+    }
+    
+    .status-badge {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        border-radius: 25px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .status-paid {
+        background: var(--success-color);
+        color: white;
+    }
+    
+    .status-pending {
+        background: var(--warning-color);
+        color: white;
+    }
+    
+    .status-failed {
+        background: var(--danger-color);
+        color: white;
+    }
+    
+    .update-form-card {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+    
+    .update-form-card h3 {
+        color: var(--primary-color);
+        margin-bottom: 1.5rem;
+        font-weight: 600;
+    }
+    
+    .form-control {
+        border-radius: 10px;
+        border: 2px solid #e5e7eb;
+        padding: 0.75rem 1rem;
+        transition: all 0.3s ease;
+    }
+    
+    .form-control:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.2rem rgba(37, 99, 235, 0.25);
+    }
+    
+    .btn-update {
+        background: linear-gradient(135deg, var(--primary-color) 0%, #1e40af 100%);
+        border: none;
+        padding: 0.75rem 2rem;
+        border-radius: 10px;
+        font-weight: 600;
+        color: white;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-update:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(37, 99, 235, 0.4);
+    }
+    
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        color: var(--primary-color);
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        margin-top: 1.5rem;
+    }
+    
+    .back-link:hover {
+        color: #1e40af;
+        text-decoration: none;
+        transform: translateX(-3px);
+    }
+    
+    .back-link i {
+        margin-right: 0.5rem;
+    }
+
+    .address-details {
+        line-height: 1.4;
+    }
+    
+    .address-details .contact-info {
+        margin-top: 0.5rem;
+        font-size: 0.95rem;
+        opacity: 0.9;
+    }
+    
+    .address-warning {
+        background: rgba(255, 193, 7, 0.2);
+        border: 1px solid rgba(255, 193, 7, 0.5);
+        border-radius: 8px;
+        padding: 0.75rem;
+        margin-top: 0.5rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Page Header -->
+    <div class="page-header">
+        <h1 class="h3 mb-0">Order Details</h1>
+    </div>
+
+    <!-- Order Details Card -->
+    <div class="order-details-card">
+        <h2><i class="fas fa-package"></i> Order #{{ order.id }} Details</h2>
+        
+        <div class="info-grid">
+            <div class="info-item">
+                <div class="info-label">Bid ID</div>
+                <div class="info-value">#{{ order.bid.id }}</div>
+            </div>
+            
+            <div class="info-item">
+                <div class="info-label">Bid Amount</div>
+                <div class="info-value">₹{{ order.bid.amount }}</div>
+            </div>
+            
+            <div class="info-item">
+                <div class="info-label">Customer</div>
+                <div class="info-value">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-user me-2"></i>
+                        <div>
+                            <div>{{ order.bid.bidder.get_full_name|default:order.bid.bidder.username }}</div>
+                            <small class="opacity-75">{{ order.bid.bidder.email }}</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="info-item">
+                <div class="info-label">Payment Status</div>
+                <div class="info-value">
+                    <span class="status-badge {% if order.payment_status == 'paid' %}status-paid{% elif order.payment_status == 'pending' %}status-pending{% else %}status-failed{% endif %}">
+                        {{ order.payment_status|title }}
+                    </span>
+                </div>
+            </div>
+            
+            <div class="info-item">
+                <div class="info-label">Delivery Address</div>
+                <div class="info-value">
+                    {% if order.bid.auction.auctioneer.address %}
+                        <div class="address-details">
+                            <div class="d-flex align-items-start">
+                                <i class="fas fa-map-marker-alt me-2 mt-1"></i>
+                                <div>
+                                    <div class="fw-medium">{{ order.bid.auction.auctioneer.address }}</div>
+                                    <div class="contact-info">
+                                        {% if order.bid.auction.auctioneer.phone %}
+                                            <div class="mb-1">
+                                                <i class="fas fa-phone me-1"></i>{{ order.bid.auction.auctioneer.phone }}
+                                            </div>
+                                        {% endif %}
+                                        {% if order.bid.auction.auctioneer.email %}
+                                            <div>
+                                                <i class="fas fa-envelope me-1"></i>{{ order.bid.auction.auctioneer.email }}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% elif order.shipping_address %}
+                        <div class="d-flex align-items-start">
+                            <i class="fas fa-map-marker-alt me-2 mt-1"></i>
+                            <div>{{ order.shipping_address }}</div>
+                        </div>
+                    {% else %}
+                        <div class="address-warning">
+                            <div class="d-flex align-items-center text-warning">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                <span>Delivery address not provided</span>
+                            </div>
+                            <small class="d-block mt-1 opacity-75">
+                                Please contact customer for delivery details
+                            </small>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="info-item">
+                <div class="info-label">Tracking Number</div>
+                <div class="info-value">
+                    <i class="fas fa-barcode me-2"></i>
+                    {% if  order.bid.id %}
+                        <span class="font-monospace">{{  order.bid.id }}</span>
+                    {% else %}
+                        <span class="opacity-75">Not assigned yet</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Update Shipping Status Form -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="update-form-card">
+                <h3><i class="fas fa-edit"></i> Update Shipping Status</h3>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        {{ form.as_p }}
+                    </div>
+                    <button type="submit" class="btn btn-update">
+                        <i class="fas fa-save"></i> Update Status
+                    </button>
+                </form>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-info-circle"></i> Order Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-6">
+                            <small class="text-muted">Order Date</small>
+                            <p class="mb-2">{{ order.created_at|date:"M d, Y" }}</p>
+                        </div>
+                        <div class="col-6">
+                            <small class="text-muted">Last Updated</small>
+                            <p class="mb-2">{{ order.updated_at|date:"M d, Y H:i" }}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-6">
+                            <small class="text-muted">Current Status</small>
+                            <p class="mb-2">
+                                <span class="badge bg-primary">{{ order.shipping_status|title }}</span>
+                            </p>
+                        </div>
+                        <div class="col-6">
+                            <small class="text-muted">Priority</small>
+                            <p class="mb-2">
+                                <span class="badge {% if order.is_urgent %}bg-danger{% else %}bg-secondary{% endif %}">
+                                    {% if order.is_urgent %}High{% else %}Normal{% endif %}
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+                    
+                    {% if order.notes %}
+                    <div class="mt-3">
+                        <small class="text-muted">Notes</small>
+                        <p class="mb-0">{{ order.notes }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Back Link -->
+    <a href="{% url 'delivery_app:assigned_orders' %}" class="back-link">
+        <i class="fas fa-arrow-left"></i> Back to Orders
+    </a>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Auto-refresh page every 30 seconds to check for updates
+    setInterval(function() {
+        // You can add logic here to refresh order status if needed
+    }, 30000);
+    
+    // Form submission feedback
+    document.querySelector('form').addEventListener('submit', function(e) {
+        const submitBtn = this.querySelector('button[type="submit"]');
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating...';
+        submitBtn.disabled = true;
+    });
+</script>
+{% endblock %}

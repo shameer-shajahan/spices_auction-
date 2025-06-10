@@ -1,4 +1,4 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect,get_object_or_404
 from django.contrib import messages
 from django.views.generic import CreateView,View,TemplateView,ListView,UpdateView,DetailView
 from django.contrib.auth import authenticate, login,logout
@@ -8,7 +8,7 @@ from datetime import date
 from django.db.models import Sum
 from django.views.generic.edit import DeleteView
 from django.urls import reverse_lazy
-from adminapi.models import Spice,Seller,Bid,Feedbacks,Auction,Payment
+from adminapi.models import Spice,Seller,Bid,Feedbacks,Auction,Payment,DeliveryAgent
 
 
 def signin_required(fn):    
@@ -51,6 +51,53 @@ class SignInView(View):
         
         messages.error(request, "Failed to login")
         return render(request, self.template_name)
+
+from .forms import DeliveryAgentForm
+from django.contrib.auth.decorators import login_required, user_passes_test
+
+def is_admin(user):
+    return user.is_authenticated and user.user_type == 'Admin'
+
+@login_required
+@user_passes_test(is_admin)
+def create_delivery_agent(request):
+    if request.method == 'POST':
+        form = DeliveryAgentForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('delivery_agent_list')  # Create this view if needed
+    else:
+        form = DeliveryAgentForm()
+    return render(request, 'delivery/create_delivery_agent.html', {'form': form})
+
+@login_required
+@user_passes_test(is_admin)
+def delivery_agent_list(request):
+    agents = DeliveryAgent.objects.all()
+    return render(request, 'delivery/delivery_agent_list.html', {'agents': agents})
+
+@login_required
+@user_passes_test(is_admin)
+def edit_delivery_agent(request, pk):
+    agent = get_object_or_404(DeliveryAgent, pk=pk)
+    form = DeliveryAgentForm(request.POST or None, request.FILES or None, instance=agent)
+    
+    if request.method == 'POST' and form.is_valid():
+        form.save()
+        return redirect('delivery_agent_list')
+    
+    return render(request, 'delivery/edit_delivery_agent.html', {'form': form})
+
+@login_required
+@user_passes_test(is_admin)
+def delete_delivery_agent(request, pk):
+    agent = get_object_or_404(DeliveryAgent, pk=pk)
+    if request.method == 'POST':
+        agent.delete()
+        return redirect('delivery_agent_list')
+    return render(request, 'delivery/delete_delivery_agent.html', {'agent': agent})
+
+
 
 from django.utils import timezone
   
@@ -140,3 +187,34 @@ def signoutview(request,*args,**kwargs):
     logout(request)
     return redirect("index")
 
+
+from django.views.generic import ListView
+from .models import BidPurchase
+
+class CompletedPaymentsView(ListView):
+    model = BidPurchase
+    template_name = 'completed_payments.html'  # Update as per your template location
+    context_object_name = 'completed_purchases'
+
+    def get_queryset(self):
+        return BidPurchase.objects.filter(payment_status='completed')
+    
+
+
+# views.py
+from django.shortcuts import get_object_or_404, redirect, render
+from .models import BidPurchase
+from .forms import AssignDeliveryAgentForm
+
+def assign_delivery_agent(request, purchase_id):
+    purchase = get_object_or_404(BidPurchase, id=purchase_id)
+    
+    if request.method == 'POST':
+        form = AssignDeliveryAgentForm(request.POST, instance=purchase)
+        if form.is_valid():
+            form.save()
+            return redirect('completed_payments')  # Or your list view name
+    else:
+        form = AssignDeliveryAgentForm(instance=purchase)
+
+    return render(request, 'assign_delivery.html', {'form': form, 'purchase': purchase})

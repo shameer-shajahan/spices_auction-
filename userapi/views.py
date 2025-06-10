@@ -1,12 +1,11 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect,get_object_or_404
 from django.views import View
 from adminapi.models import Seller,Spice,Bid,Auction,Payment,Feedbacks,CustomUser,BidPurchase
 from django.contrib import messages
-from django.views.generic import CreateView,FormView,ListView,UpdateView
+from django.views.generic import CreateView,FormView,ListView,UpdateView,DetailView
 from django.urls import reverse_lazy
 from userapi.forms import RegForm,LoginForm,AddProducts,AddAuction,AddBid,AddFeedback,ProfileUpdateForm
 from django.contrib.auth import authenticate,login,logout
-from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
 from django.utils.decorators import method_decorator
 from reportlab.pdfgen import canvas
@@ -17,6 +16,7 @@ from django.dispatch import receiver
 from userapi.models import Card
 from userapi.forms import CardForm
 from django.core.mail import send_mail
+from django.http import Http404
 
 
 
@@ -57,6 +57,8 @@ class SignInView(FormView):
                         return redirect('/adminapi/home/')
                     elif user_type  == 'Seller':
                         return redirect("auctions-list")
+                    elif user_type == 'DeliveryAgent':
+                        return redirect("delivery_app:assigned_orders")
                     else:
                         messages.error(request, "Invalid user type.")
                         return redirect('signin')
@@ -116,24 +118,6 @@ class ProfileUpdateView(UpdateView):
         context['user'] = self.get_object()  # This ensures 'user' is available in the template
         return context
 
-# class SignInView(FormView):
-#     template_name="user/loginpage.html"
-#     form_class=LoginForm
-    
-#     def post(self,request,*args,**kwargs):
-#         form=LoginForm(request.POST)
-#         if form.is_valid():
-#             uname=form.cleaned_data.get("username")
-#             pwd=form.cleaned_data.get("password")
-#             usr=authenticate(request,username=uname,password=pwd)
-#             if usr:
-#                 login(request,usr)
-#                 messages.success(request,"login success")
-#                 return redirect("auctions-list")
-#             else:
-#                 messages.error(request,"failed to login")
-#                 return render(request,self.template_name,{"form":form})
-            
 class AuctionsListView(ListView):
     model = Auction
     template_name = "user/home.html"
@@ -421,7 +405,7 @@ def download_bill(request, bid_id):
     p.drawString(100, 700, f"Auctioneer : {auction}")
     p.drawString(100, 680, f"User: {user_name}")
     p.drawString(100, 660, f"Date: {date}")
-    p.drawString(100, 640, f"Quantity: {quantity}")
+    p.drawString(100, 640, f"Quantity: {quantity} .kg")
     p.drawString(100, 620, f"Unit Price: {unitprice}")
     p.drawString(100, 580, f"___________________________________")
     p.drawString(100, 550, f"Total Price: Rs. {amount}")
@@ -449,7 +433,7 @@ def download_slip(request, bid_id):
     p.setFont("Helvetica", 12)
     p.drawString(100, 720, f"Spice: {spice_name}")
     p.drawString(100, 700, f"Unit Price: Rs. {unitprice}")
-    p.drawString(100, 680, f"Quantity: {quantity} kg")
+    p.drawString(100, 680, f"Quantity: {quantity} .kg")
     p.drawString(100, 660, f"User: {user_name}")
     p.drawString(100, 640, f"Total amount: Rs. {amount}")
     p.drawString(100, 600, f"Payment Date: {date}")
@@ -614,8 +598,51 @@ def password_reset_confirm(request, uidb64, token):
         messages.error(request, "Password reset link is invalid.")
         return redirect('forgot_password')
    
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.utils import timezone
+from adminapi.models import BidPurchase  # update the import as per your project structure
 
+class UserOrderListView(LoginRequiredMixin, ListView):
+    model = BidPurchase
+    template_name = 'user/order_list.html'  # update this path as per your template location
+    context_object_name = 'orders'
 
+    def get_queryset(self):
+        return BidPurchase.objects.select_related(
+            'bid__auction'
+        ).filter(
+            bid__bidder=self.request.user
+        ).order_by('-purchase_date')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        queryset = self.get_queryset()
+        context['stats'] = {
+            'total': queryset.count(),
+            'processing': queryset.filter(shipping_status='processing').count(),
+            'shipped': queryset.filter(shipping_status='shipped').count(),
+            'delivered': queryset.filter(shipping_status='delivered').count(),
+            'returned': queryset.filter(shipping_status='returned').count(),
+        }
+        return context
+
+class UserOrderDetailView(LoginRequiredMixin, DetailView):
+    model = BidPurchase
+    template_name = 'user/order_detail.html'
+    context_object_name = 'order'
+
+    def get_queryset(self):
+        # Ensure the user can only see their own orders
+        return BidPurchase.objects.select_related('bid__auction').filter(
+            bid__bidder=self.request.user
+        )
+
+    def get_object(self, queryset=None):
+        obj = super().get_object(queryset=queryset)
+        if obj.bid.bidder != self.request.user:
+            raise Http404("You do not have permission to view this order.")
+        return obj
 
 
 

@@ -10,6 +10,7 @@ class CustomUser(AbstractUser):
     user_type_choices = [ 
         ('Admin', 'Admin'),
         ('Seller', 'Seller'),
+        ('DeliveryAgent', 'Delivery Agent'),
     ]
     user_type = models.CharField(max_length=50, choices=user_type_choices, default='Admin') 
     email = models.EmailField(null=True)
@@ -26,6 +27,20 @@ class Seller(CustomUser):
     id_proof = models.FileField(null=True, upload_to="images",blank=True)
     profile = models.ImageField(upload_to="images", null=True, blank=True)
     is_available = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.name
+
+class DeliveryAgent(CustomUser):
+    name = models.CharField(max_length=100)
+    phone = models.CharField(max_length=100)
+    email_address = models.EmailField()
+    vehicle_number = models.CharField(max_length=100, null=True, blank=True)
+    license_copy = models.FileField(upload_to="images", null=True, blank=True)
+    profile = models.ImageField(upload_to="images", null=True, blank=True)
+    is_available = models.BooleanField(default=True)
+    address = models.TextField(null=True, blank=True)  # Optional
+    id_proof = models.FileField(upload_to="documents", null=True, blank=True)  # Optional
 
     def __str__(self):
         return self.name
@@ -100,7 +115,7 @@ class BidPurchase(models.Model):
             ('completed', 'Completed'),
             ('failed', 'Failed'),
             ('refunded', 'Refunded')
-        ],
+        ], 
         default='pending'
     )
     payment_method = models.CharField(
@@ -128,6 +143,7 @@ class BidPurchase(models.Model):
         default='processing'
     )
     tracking_number = models.CharField(max_length=100, blank=True, null=True)
+    delivery_agent = models.ForeignKey(DeliveryAgent, on_delete=models.SET_NULL, null=True, blank=True)
     
     def __str__(self):
         return f"Purchase for bid #{self.bid.id} - {self.bid.amount} by {self.bid.bidder.username}"

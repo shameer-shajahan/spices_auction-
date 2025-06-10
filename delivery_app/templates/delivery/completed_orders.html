@@ -1,0 +1,189 @@
+{% extends 'delivery/base.html' %}
+
+{% block content %}
+<!-- Completed Orders Table -->
+<div class="card">
+    <div class="card-header">
+        <h5 class="mb-0">
+            <i class="fas fa-check-circle me-2 text-success"></i>Completed Orders
+            <span class="badge bg-success ms-2">{{ completed_orders|length }} delivered</span>
+        </h5>
+    </div>
+    <div class="card-body p-0">
+        {% if completed_orders %}
+        <div class="table-container">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>
+                            <a href="?{% if request.GET.ordering == 'bid__id' %}-{% endif %}bid__id&{{ request.GET.urlencode }}" 
+                               class="text-decoration-none text-dark">
+                                Bid ID 
+                                {% if request.GET.ordering == 'bid__id' %}<i class="fas fa-sort-up text-primary"></i>
+                                {% elif request.GET.ordering == '-bid__id' %}<i class="fas fa-sort-down text-primary"></i>
+                                {% else %}<i class="fas fa-sort text-muted"></i>{% endif %}
+                            </a>
+                        </th>
+                        <th>Product</th>
+                        <th>
+                            <a href="?{% if request.GET.ordering == 'bid__amount' %}-{% endif %}bid__amount&{{ request.GET.urlencode }}" 
+                               class="text-decoration-none text-dark">
+                                Amount 
+                                {% if request.GET.ordering == 'bid__amount' %}<i class="fas fa-sort-up text-primary"></i>
+                                {% elif request.GET.ordering == '-bid__amount' %}<i class="fas fa-sort-down text-primary"></i>
+                                {% else %}<i class="fas fa-sort text-muted"></i>{% endif %}
+                            </a>
+                        </th>
+                        <th>Customer</th>
+                        <th>Delivery Address</th>
+                        <th>
+                            <a href="?{% if request.GET.ordering == 'purchase_date' %}-{% endif %}purchase_date&{{ request.GET.urlencode }}" 
+                               class="text-decoration-none text-dark">
+                                Delivered Date 
+                                {% if request.GET.ordering == 'purchase_date' %}<i class="fas fa-sort-up text-primary"></i>
+                                {% elif request.GET.ordering == '-purchase_date' %}<i class="fas fa-sort-down text-primary"></i>
+                                {% else %}<i class="fas fa-sort text-muted"></i>{% endif %}
+                            </a>
+                        </th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in completed_orders %}
+                    <tr class="order-card position-relative">
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="priority-indicator bg-success rounded-circle me-2" style="width: 8px; height: 8px;"></div>
+                                <div>
+                                    <strong>#{{ order.bid.id }}</strong>
+                                    <span class="badge bg-success ms-1">
+                                        <i class="fas fa-check me-1"></i>DELIVERED
+                                    </span>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="fw-medium text-truncate" style="max-width: 150px;" title="{{ order.bid.product_name }}">
+                                {{ order.bid.product_name }}
+                            </div>
+                            {% if order.bid.auction.category %}
+                            <small class="text-muted">{{ order.bid.auction.category }}</small>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <strong class="text-success">${{ order.bid.amount|floatformat:2 }}</strong>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="avatar bg-success text-white rounded-circle me-2 d-flex align-items-center justify-content-center" 
+                                     style="width: 32px; height: 32px; font-size: 0.8rem;">
+                                    {{ order.bid.bidder.username|first|upper }}
+                                </div>
+                                <div>
+                                    <div class="fw-medium">{{ order.bid.bidder.get_full_name|default:order.bid.bidder.username }}</div>
+                                    <small class="text-muted">{{ order.bid.bidder.email }}</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="text-truncate" style="max-width: 200px;">
+                                {% if order.bid.auction.auctioneer.address %}
+                                    <i class="fas fa-map-marker-alt text-success me-1"></i>
+                                    <span title="{{ order.bid.auction.auctioneer.address }}">
+                                        {{ order.bid.auction.auctioneer.address|truncatechars:30 }}
+                                    </span>
+                                    {% if order.bid.auction.auctioneer.phone %}
+                                        <br><small class="text-muted">
+                                            <i class="fas fa-phone me-1"></i>{{ order.bid.auction.auctioneer.phone }}
+                                        </small>
+                                    {% endif %}
+                                {% else %}
+                                    <span class="text-muted">
+                                        <i class="fas fa-exclamation-triangle me-1"></i>
+                                        Address not available
+                                    </span>
+                                {% endif %}
+                            </div>
+                        </td>
+                        <td>
+                            <div>
+                                <div class="fw-medium text-success">
+                                    <i class="fas fa-calendar-check me-1"></i>
+                                    {{ order.purchase_date|date:"M d, Y" }}
+                                </div>
+                                <small class="text-muted">{{ order.purchase_date|time:"g:i A" }}</small>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="action-buttons">
+                                <a href="{% url 'delivery_app:order_detail' order.pk %}" 
+                                   class="btn btn-outline-success btn-sm">
+                                    <i class="fas fa-eye"></i> View Details
+                                </a>                                
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-5">
+            <i class="fas fa-clipboard-check fa-3x text-muted mb-3"></i>
+            <h5 class="text-muted">No completed orders found</h5>
+            <p class="text-muted">
+                {% if request.GET.status or request.GET.search or request.GET.date_range %}
+                    No completed orders match your current filters. Try adjusting your search criteria.
+                {% else %}
+                    Your delivered orders will appear here once you complete some deliveries.
+                {% endif %}
+            </p>
+            {% if request.GET.status or request.GET.search or request.GET.date_range %}
+            <a href="{% url 'delivery_app:completed_orders' %}" class="btn btn-success">
+                <i class="fas fa-times me-2"></i>Clear Filters
+            </a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Optional: Add some custom styles -->
+<style>
+.priority-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.avatar {
+    flex-shrink: 0;
+}
+
+.action-buttons .btn {
+    margin-right: 0.25rem;
+}
+
+.order-card:hover {
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+@media (max-width: 768px) {
+    .table-container {
+        overflow-x: auto;
+    }
+    
+    .action-buttons {
+        white-space: nowrap;
+    }
+}
+</style>
+
+<!-- Optional: Add JavaScript for print functionality -->
+<script>
+function printDeliveryReport(orderId) {
+    // You can implement this to generate a delivery report
+    window.open(`/delivery/orders/${orderId}/delivery-report/`, '_blank');
+}
+</script>
+{% endblock %}

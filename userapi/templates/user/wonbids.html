@@ -548,7 +548,7 @@
          <tr>
            <th><span>Product</span></th>
            <th><span>Bidder</span></th>
-           <th><span>Amount</span></th>
+           <th><span>Total Amount</span></th>
            <th><span>Timestamp</span></th>
            <th><span>Status</span></th>
            <th><span>Action</span></th>
@@ -564,7 +564,7 @@
               </div>
             </td>
             <td>{{bid.bidder.seller.name}}</td>
-            <td>Rs. {{bid.amount}}</td>          
+            <td>Rs. {{bid.amount}} x {{bid.auction.spice.stock_quantity}} kg</td>          
             <td>{{bid.timestamp}}</td>   
             <td>
               {% if bid.is_selected %}

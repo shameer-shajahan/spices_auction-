@@ -1,0 +1,260 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block body_block %}
+<div class="container-fluid py-4">
+  <div class="row">
+    <div class="col-12">
+      <div class="card my-4">
+        <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+          <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
+            <h6 class="text-white text-capitalize ps-3">Completed Payments</h6>
+          </div>
+        </div>
+        <div class="card-body px-0 pb-2">
+          <div class="table-responsive p-0">
+            {% if completed_purchases %}
+              <table class="table align-items-center mb-0">
+                <thead>
+                  <tr>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Bid ID</th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Bidder Details</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Amount</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Purchase Date</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Delivery Status</th>
+                    <th class="text-secondary opacity-7"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for purchase in completed_purchases %}
+                  <tr>
+                    <td>
+                      <div class="d-flex px-2 py-1">
+                        <div class="d-flex flex-column justify-content-center">
+                          <h6 class="mb-0 text-sm font-weight-bold">#{{ purchase.bid.id }}</h6>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="d-flex flex-column justify-content-center">
+                        <h6 class="mb-0 text-sm">{{ purchase.bid.bidder.username }}</h6>
+                        <p class="text-xs text-secondary mb-0">{{ purchase.bid.bidder.email|default:"No email" }}</p>
+                      </div>
+                    </td>
+                    <td class="align-middle text-center text-sm">
+                      <span class="badge badge-sm bg-gradient-success">₹{{ purchase.amount_paid|floatformat:2 }}</span>
+                    </td>
+                    <td class="align-middle text-center">
+                      <span class="text-secondary text-xs font-weight-bold">{{ purchase.purchase_date|date:"M d, Y" }}</span>
+                      <br>
+                      <span class="text-secondary text-xs">{{ purchase.purchase_date|time:"H:i" }}</span>
+                    </td>
+                    <td class="align-middle text-center">
+                      {% if purchase.delivery_agent %}
+                        <div class="d-flex flex-column align-items-center">
+                          <span class="badge badge-sm bg-gradient-info mb-1">Assigned</span>
+                          <span class="text-xs text-secondary">{{ purchase.delivery_agent.name }}</span>
+                        </div>
+                      {% else %}
+                        <span class="badge badge-sm bg-gradient-warning">Pending Assignment</span>
+                      {% endif %}
+                    </td>
+                    <td class="align-middle">
+                      {% if not purchase.delivery_agent %}
+                        <a href="{% url 'assign_delivery_agent' purchase.id %}" class="btn btn-sm bg-gradient-primary mb-0" data-toggle="tooltip" data-original-title="Assign Delivery Agent">
+                          <i class="material-icons text-sm">local_shipping</i>
+                          Assign Agent
+                        </a>
+                      {% else %}
+                        <button class="btn btn-sm bg-gradient-secondary mb-0" disabled>
+                          <i class="material-icons text-sm">check_circle</i>
+                          Assigned
+                        </button>
+                      {% endif %}
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            {% else %}
+              <div class="text-center py-5">
+                <div class="icon icon-shape icon-sm mx-auto mb-3 bg-gradient-secondary shadow text-center border-radius-md">
+                  <i class="material-icons opacity-10">payment</i>
+                </div>
+                <h6 class="text-secondary">No Completed Payments Found</h6>
+                <p class="text-sm text-secondary mb-0">There are currently no completed payments to display.</p>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Summary Cards Row -->
+  {% if completed_purchases %}
+  <div class="row mt-4">
+    <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+      <div class="card">
+        <div class="card-header p-3 pt-2">
+          <div class="icon icon-lg icon-shape bg-gradient-dark shadow-dark text-center border-radius-xl mt-n4 position-absolute">
+            <i class="material-icons opacity-10">payment</i>
+          </div>
+          <div class="text-end pt-1">
+            <p class="text-sm mb-0 text-capitalize">Total Payments</p>
+            <h4 class="mb-0">{{ completed_purchases|length }}</h4>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+      <div class="card">
+        <div class="card-header p-3 pt-2">
+          <div class="icon icon-lg icon-shape bg-gradient-primary shadow-primary text-center border-radius-xl mt-n4 position-absolute">
+            <i class="material-icons opacity-10">local_shipping</i>
+          </div>
+          <div class="text-end pt-1">
+            <p class="text-sm mb-0 text-capitalize">Assigned Deliveries</p>
+            <h4 class="mb-0">
+              {% with assigned_count=0 %}
+                {% for purchase in completed_purchases %}
+                  {% if purchase.delivery_agent %}
+                    {% with assigned_count=assigned_count|add:1 %}{% endwith %}
+                  {% endif %}
+                {% endfor %}
+                {{ assigned_count }}
+              {% endwith %}
+            </h4>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+      <div class="card">
+        <div class="card-header p-3 pt-2">
+          <div class="icon icon-lg icon-shape bg-gradient-success shadow-success text-center border-radius-xl mt-n4 position-absolute">
+            <i class="material-icons opacity-10">attach_money</i>
+          </div>
+          <div class="text-end pt-1">
+            <p class="text-sm mb-0 text-capitalize">Total Revenue</p>
+            <h4 class="mb-0">
+              ₹{% with total=0 %}
+                {% for purchase in completed_purchases %}
+                  {% with total=total|add:purchase.amount_paid %}{% endwith %}
+                {% endfor %}
+                {{ total|floatformat:2 }}
+              {% endwith %}
+            </h4>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-3 col-sm-6">
+      <div class="card">
+        <div class="card-header p-3 pt-2">
+          <div class="icon icon-lg icon-shape bg-gradient-info shadow-info text-center border-radius-xl mt-n4 position-absolute">
+            <i class="material-icons opacity-10">pending_actions</i>
+          </div>
+          <div class="text-end pt-1">
+            <p class="text-sm mb-0 text-capitalize">Pending Assignment</p>
+            <h4 class="mb-0">
+              {% with pending_count=0 %}
+                {% for purchase in completed_purchases %}
+                  {% if not purchase.delivery_agent %}
+                    {% with pending_count=pending_count|add:1 %}{% endwith %}
+                  {% endif %}
+                {% endfor %}
+                {{ pending_count }}
+              {% endwith %}
+            </h4>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+<style>
+/* Custom styles for enhanced visual appeal */
+.card {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.table tbody tr {
+  transition: all 0.2s ease;
+}
+
+.table tbody tr:hover {
+  background-color: rgba(0, 0, 0, 0.02);
+  transform: scale(1.01);
+}
+
+.badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.5em 0.75em;
+}
+
+.btn {
+  transition: all 0.2s ease;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+}
+
+.icon-shape {
+  transition: all 0.3s ease;
+}
+
+.card:hover .icon-shape {
+  transform: scale(1.1);
+}
+
+/* Responsive improvements */
+@media (max-width: 768px) {
+  .table-responsive {
+    font-size: 0.875rem;
+  }
+  
+  .btn-sm {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+  }
+}
+
+/* Loading animation for better UX */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.card {
+  animation: fadeIn 0.5s ease-out;
+}
+
+.table tbody tr {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Enhanced badge colors */
+.bg-gradient-success {
+  background: linear-gradient(87deg, #2dce89 0, #2dcecc 100%);
+}
+
+.bg-gradient-info {
+  background: linear-gradient(87deg, #11cdef 0, #1171ef 100%);
+}
+
+.bg-gradient-warning {
+  background: linear-gradient(87deg, #fb6340 0, #fbb140 100%);
+}
+</style>
+{% endblock %}

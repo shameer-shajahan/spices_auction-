@@ -74,7 +74,7 @@
                                                         <h4>{{a.spice.name}}</h4>
                                                         <p>{{a.spice.description}}</p>
                                                         <div class="d-flex justify-content-between flex-lg-wrap">
-                                                            <p class="text-dark fs-6 fw-bold mb-2 ms-5">${{a.starting_bid}} / {{a.spice.stock_quantity}}kg</p>
+                                                            <p class="text-dark fs-6 fw-bold mb-2 ms-5">${{a.starting_bid}} / {{a.spice.stock_quantity}}.kg</p>
                                                             <p class="text-dark fs-6 fw-bold mb-2">Ends at: {{a.end_time}}</p>
                                                             <a href="{%url 'place_bid' a.id%}" class="btn border border-dark rounded-pill px-3 py-1 text-dark ms-3 bid-button" id="show-form-btn"><i class="fa fa-shopping-bag me-2"></i> Place Bid</a>
                                                         </div>

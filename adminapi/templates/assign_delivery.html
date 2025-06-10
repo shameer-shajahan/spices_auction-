@@ -1,0 +1,334 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block body_block %}
+<div class="container-fluid py-4">
+  <div class="row">
+    <div class="col-12">
+      <div class="card my-4">
+        <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+          <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
+            <h6 class="text-white text-capitalize ps-3">
+              <i class="material-icons opacity-10 me-2">local_shipping</i>
+              Assign Delivery Agent
+            </h6>
+          </div>
+        </div>
+        <div class="">
+          <div class="">
+            <div class="row justify-content-center">
+              <div class="col-md-8 col-lg-6">
+                <div class=" pt-2 mt-4 mb-4">
+                  <div class="">
+                    <!-- Purchase Info Section -->
+                    <div class="mb-4 p-3 bg-light rounded">
+                      <h5 class="text-dark mb-3">
+                        <i class="material-icons opacity-10 me-2">shopping_cart</i>
+                        Purchase Details
+                      </h5>
+                      <div class="row">
+                        <div class="col-sm-6">
+                          <p class="text-sm mb-2">
+                            <strong>Purchase ID:</strong> 
+                            <span class="badge bg-gradient-info">#{{ purchase.id }}</span>
+                          </p>
+                        </div>
+                        {% if purchase.customer %}
+                        <div class="col-sm-6">
+                          <p class="text-sm mb-2">
+                            <strong>Customer:</strong> {{ purchase.customer.name|default:"N/A" }}
+                          </p>
+                        </div>
+                        {% endif %}
+                        {% if purchase.total_amount %}
+                        <div class="col-sm-6">
+                          <p class="text-sm mb-2">
+                            <strong>Amount:</strong> ₹{{ purchase.total_amount }}
+                          </p>
+                        </div>
+                        {% endif %}
+                        {% if purchase.created_at %}
+                        <div class="col-sm-6">
+                          <p class="text-sm mb-0">
+                            <strong>Date:</strong> {{ purchase.created_at|date:"M d, Y" }}
+                          </p>
+                        </div>
+                        {% endif %}
+                      </div>
+                    </div>
+
+                    <!-- Assignment Form -->
+                    <form method="post" class="needs-validation" novalidate>
+                      {% csrf_token %}
+                      
+                      <div class="mb-4">
+                        <h6 class="text-dark mb-3">
+                          <i class="material-icons opacity-10 me-2">person_add</i>
+                          Select Delivery Agent
+                        </h6>
+                        
+                        <!-- Custom styled form fields -->
+                        {% for field in form %}
+                          <div class="mb-3">
+                            <label for="{{ field.id_for_label }}" class="form-label text-dark fw-bold">{{ field.label }}</label>
+                            <div class="input-group input-group-outline">
+                              {% if field.field.widget.input_type == 'select' %}
+                                <select name="{{ field.name }}" id="{{ field.id_for_label }}" class="form-control" {% if field.field.required %}required{% endif %}>
+                                  <option value="">Choose {{ field.label }}...</option>
+                                  {% for choice in field.field.choices %}
+                                    {% if choice.0 %}
+                                      <option value="{{ choice.0 }}" {% if choice.0 == field.value %}selected{% endif %}>{{ choice.1 }}</option>
+                                    {% endif %}
+                                  {% endfor %}
+                                </select>
+                              {% else %}
+                                <input type="{{ field.field.widget.input_type|default:'text' }}" 
+                                       name="{{ field.name }}" 
+                                       id="{{ field.id_for_label }}" 
+                                       class="form-control"
+                                       placeholder="Enter {{ field.label|lower }}"
+                                       {% if field.value %}value="{{ field.value }}"{% endif %}
+                                       {% if field.field.required %}required{% endif %}
+                                       {% for attr, val in field.field.widget.attrs.items %}{{ attr }}="{{ val }}"{% endfor %}>
+                              {% endif %}
+                            </div>
+                            {% if field.errors %}
+                              <div class="text-danger text-sm mt-1">
+                                {% for error in field.errors %}
+                                  <small><i class="material-icons text-sm">error</i> {{ error }}</small>
+                                {% endfor %}
+                              </div>
+                            {% endif %}
+                            {% if field.help_text %}
+                              <small class="form-text text-muted mt-1">
+                                <i class="material-icons text-sm">info</i> {{ field.help_text }}
+                              </small>
+                            {% endif %}
+                          </div>
+                        {% endfor %}
+                      </div>
+
+                      <!-- Action Buttons -->
+                      <div class="d-flex justify-content-between align-items-center">
+                        <a href="{% url 'completed_payments' %}" class="btn btn-outline-secondary">
+                          <i class="material-icons opacity-10 me-1">arrow_back</i>
+                          Back to Payments
+                        </a>
+                        <button type="submit" class="btn bg-gradient-success">
+                          <i class="material-icons opacity-10 me-1">assignment_ind</i>
+                          Assign Agent
+                        </button>
+                      </div>
+                    </form>
+
+                    <!-- Success/Error Messages -->
+                    {% if messages %}
+                      <div class="mt-3">
+                        {% for message in messages %}
+                          <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                            <span class="alert-icon align-middle">
+                              {% if message.tags == 'success' %}
+                                <i class="material-icons">check_circle</i>
+                              {% elif message.tags == 'error' %}
+                                <i class="material-icons">error</i>
+                              {% else %}
+                                <i class="material-icons">info</i>
+                              {% endif %}
+                            </span>
+                            <span class="alert-text">{{ message }}</span>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                        {% endfor %}
+                      </div>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Custom Styles for Enhanced UI -->
+<style>
+.spice-floater {
+  position: fixed;
+  border-radius: 50%;
+  opacity: 0.1;
+  pointer-events: none;
+  z-index: -1;
+  animation: float 6s ease-in-out infinite;
+}
+
+.spice-1 {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(45deg, #ff6b35, #f7931e);
+  top: 20%;
+  right: 10%;
+  animation-delay: 0s;
+}
+
+.spice-2 {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(45deg, #4caf50, #8bc34a);
+  top: 60%;
+  left: 15%;
+  animation-delay: 2s;
+}
+
+.spice-3 {
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(45deg, #e91e63, #ff5722);
+  bottom: 20%;
+  right: 20%;
+  animation-delay: 4s;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  33% { transform: translateY(-20px) rotate(120deg); }
+  66% { transform: translateY(10px) rotate(240deg); }
+}
+
+.card {
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+}
+
+.form-label {
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+  color: #344767;
+  font-weight: 600;
+}
+
+.input-group-outline {
+  border: 1px solid #d2d6da;
+  border-radius: 0.375rem;
+  transition: all 0.3s ease;
+  background: #fff;
+}
+
+.input-group-outline:focus-within {
+  border-color: #e91e63;
+  box-shadow: 0 0 0 0.2rem rgba(233, 30, 99, 0.15);
+}
+
+.form-control {
+  border: none;
+  box-shadow: none;
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+}
+
+.form-control:focus {
+  border: none;
+  box-shadow: none;
+  background: #fff;
+}
+
+.btn {
+  transition: all 0.3s ease;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.bg-light {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;
+}
+
+.badge {
+  font-size: 0.8em;
+  padding: 0.4em 0.8em;
+}
+
+.text-danger.text-sm small {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.form-text {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+/* Responsive improvements */
+@media (max-width: 768px) {
+  .container-fluid {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  .card-body {
+    padding: 1.5rem;
+  }
+  
+  .d-flex.justify-content-between {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .btn {
+    width: 100%;
+  }
+}
+</style>
+
+<!-- Additional JavaScript for enhanced UX -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Form validation
+  const forms = document.querySelectorAll('.needs-validation');
+  
+  Array.from(forms).forEach(form => {
+    form.addEventListener('submit', event => {
+      if (!form.checkValidity()) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+      form.classList.add('was-validated');
+    });
+  });
+
+  // Enhanced form interactions
+  const inputs = document.querySelectorAll('.form-control');
+  inputs.forEach(input => {
+    input.addEventListener('focus', function() {
+      this.closest('.input-group-outline').style.borderColor = '#e91e63';
+    });
+    
+    input.addEventListener('blur', function() {
+      if (!this.value) {
+        this.closest('.input-group-outline').style.borderColor = '#d2d6da';
+      }
+    });
+  });
+
+  // Auto-dismiss alerts after 5 seconds
+  const alerts = document.querySelectorAll('.alert');
+  alerts.forEach(alert => {
+    setTimeout(() => {
+      const closeBtn = alert.querySelector('.btn-close');
+      if (closeBtn) closeBtn.click();
+    });
+  });
+});
+</script>
+{% endblock %}

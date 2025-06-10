@@ -1,0 +1,664 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+
+{% block body_block %}
+<div class="container-fluid py-4">
+  <div class="row">
+    <div class="col-12">
+      <div class="">
+        <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+          <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
+            <h4 class="text-white text-capitalize ps-3">
+              <i class="material-icons opacity-10 me-2">person_add</i>
+              Create Delivery Agent
+            </h4>
+          </div>
+        </div>
+        <div class="card-body px-0 ">
+          <div class="container">
+            <div class="row justify-content-center">
+              <div class="col-lg-10 col-md-12">
+                <div class="card shadow-lg border-0 form-card">
+                  <div class="card-header bg-gradient-warning text-white text-center py-4">
+                    <h5 class="mb-0">
+                      <i class="material-icons opacity-10 me-2">local_shipping</i>
+                      New Delivery Agent Registration
+                    </h5>
+                    <p class="mb-0 mt-2 opacity-8">Please fill in all required information</p>
+                  </div>
+                  <div class="card-body ">
+                    <form method="post" class="needs-validation" novalidate>
+                      {% csrf_token %}
+                      
+                      <!-- Personal Information Section -->
+                      <div class="section-header mb-4">
+                        <h6 class="section-title">
+                          <i class="material-icons me-2">person</i>
+                          Personal Information
+                        </h6>
+                        <div class="section-divider"></div>
+                      </div>
+                      
+                      <div class="row">
+                        {% for field in form %}
+                          {% if forloop.counter0|divisibleby:4 and forloop.counter0 != 0 %}
+                            </div>
+                            <!-- Contact Information Section -->
+                            <div class="section-header  ">
+                              <h6 class="section-title">
+                                <i class="material-icons me-2">contact_phone</i>
+                                Contact & Address Details
+                              </h6>
+                              <div class="section-divider"></div>
+                            </div>
+                            <div class="row">
+                          {% endif %}
+                          
+                          <div class="col-lg-6 col-md-6 mb-4">
+                            <div class="floating-label-group">
+                              {% if field.field.widget.input_type == 'checkbox' %}
+                                <div class="form-check">
+                                  {{ field|add_class:"form-check-input" }}
+                                  <label class="form-check-label" for="{{ field.id_for_label }}">
+                                    {{ field.label }}
+                                    {% if field.field.required %}<span class="required-asterisk">*</span>{% endif %}
+                                  </label>
+                                </div>
+                              {% elif field.field.widget.input_type == 'radio' %}
+                                <div class="form-check">
+                                  {{ field|add_class:"form-check-input" }}
+                                  <label class="form-check-label" for="{{ field.id_for_label }}">
+                                    {{ field.label }}
+                                    {% if field.field.required %}<span class="required-asterisk">*</span>{% endif %}
+                                  </label>
+                                </div>
+                              {% else %}
+                                <div class="custom-floating">
+                                  {% if field.field.widget.input_type == 'textarea' %}
+                                    {{ field|add_class:"form-control floating-input"|attr:"placeholder: "|attr:"rows:4" }}
+                                  {% elif field.field.widget.input_type == 'select' %}
+                                    {{ field|add_class:"form-select floating-input"|attr:"placeholder: " }}
+                                  {% elif field.field.widget.input_type == 'email' %}
+                                    {{ field|add_class:"form-control floating-input"|attr:"placeholder: " }}
+                                  {% elif field.field.widget.input_type == 'tel' %}
+                                    {{ field|add_class:"form-control floating-input"|attr:"placeholder: "|attr:"pattern:[0-9]{10}" }}
+                                  {% elif field.field.widget.input_type == 'number' %}
+                                    {{ field|add_class:"form-control floating-input"|attr:"placeholder: " }}
+                                  {% elif field.field.widget.input_type == 'url' %}
+                                    {{ field|add_class:"form-control floating-input"|attr:"placeholder: " }}
+                                  {% elif field.field.widget.input_type == 'password' %}
+                                    {{ field|add_class:"form-control floating-input"|attr:"placeholder: " }}
+                                  {% elif field.field.widget.input_type == 'date' %}
+                                    {{ field|add_class:"form-control floating-input"|attr:"placeholder: " }}
+                                  {% elif field.field.widget.input_type == 'time' %}
+                                    {{ field|add_class:"form-control floating-input"|attr:"placeholder: " }}
+                                  {% elif field.field.widget.input_type == 'datetime-local' %}
+                                    {{ field|add_class:"form-control floating-input"|attr:"placeholder: " }}
+                                  {% elif field.field.widget.input_type == 'file' %}
+                                    {{ field|add_class:"form-control floating-input" }}
+                                  {% else %}
+                                    {{ field|add_class:"form-control floating-input"|attr:"placeholder: " }}
+                                  {% endif %}
+                                  
+                                  <label for="{{ field.id_for_label }}" class="floating-label">
+                                    {{ field.label }}
+                                    {% if field.field.required %}
+                                      <span class="required-asterisk">*</span>
+                                    {% endif %}
+                                  </label>
+                                  
+                                  <!-- Field Icon -->
+                                  <div class="field-icon">
+                                    {% if 'first_name' in field.name|lower or 'last_name' in field.name|lower or 'full_name' in field.name|lower %}
+                                      <i class="material-icons">badge</i>
+                                    {% elif 'email' in field.name|lower %}
+                                      <i class="material-icons">email</i>
+                                    {% elif 'phone' in field.name|lower or 'mobile' in field.name|lower or 'contact' in field.name|lower %}
+                                      <i class="material-icons">phone</i>
+                                    {% elif 'address' in field.name|lower or 'location' in field.name|lower or 'city' in field.name|lower or 'state' in field.name|lower or 'zip' in field.name|lower %}
+                                      <i class="material-icons">location_on</i>
+                                    {% elif 'license' in field.name|lower or 'id' in field.name|lower %}
+                                      <i class="material-icons">credit_card</i>
+                                    {% elif 'vehicle' in field.name|lower or 'car' in field.name|lower or 'bike' in field.name|lower %}
+                                      <i class="material-icons">directions_car</i>
+                                    {% elif 'age' in field.name|lower or 'birth' in field.name|lower or 'date' in field.name|lower %}
+                                      <i class="material-icons">cake</i>
+                                    {% elif 'salary' in field.name|lower or 'amount' in field.name|lower or 'price' in field.name|lower %}
+                                      <i class="material-icons">attach_money</i>
+                                    {% elif 'experience' in field.name|lower or 'work' in field.name|lower %}
+                                      <i class="material-icons">work</i>
+                                    {% elif 'password' in field.name|lower %}
+                                      <i class="material-icons">lock</i>
+                                    {% elif 'file' in field.field.widget.input_type %}
+                                      <i class="material-icons">attach_file</i>
+                                    {% elif 'url' in field.field.widget.input_type or 'website' in field.name|lower %}
+                                      <i class="material-icons">link</i>
+                                    {% elif 'time' in field.field.widget.input_type %}
+                                      <i class="material-icons">schedule</i>
+                                    {% else %}
+                                      <i class="material-icons">info</i>
+                                    {% endif %}
+                                  </div>
+                                </div>
+                              {% endif %}
+                              
+                              <!-- Error Messages -->
+                              {% if field.errors %}
+                                <div class="invalid-feedback d-block">
+                                  <i class="material-icons error-icon me-2">error</i>
+                                  <div class="error-text">
+                                    {% for error in field.errors %}
+                                      <div>{{ error }}</div>
+                                    {% endfor %}
+                                  </div>
+                                </div>
+                              {% endif %}
+                              
+                              <!-- Success Message (for valid fields) -->
+                              {% if field.value and not field.errors %}
+                                <div class="valid-feedback d-none">
+                                  <i class="material-icons me-2">check_circle</i>
+                                  <span>Looks good!</span>
+                                </div>
+                              {% endif %}
+                              
+                              <!-- Help Text -->
+                              {% if field.help_text %}
+                                <div class="help-text">
+                                  <i class="material-icons help-icon">help_outline</i>
+                                  <small>{{ field.help_text }}</small>
+                                </div>
+                              {% endif %}
+                            </div>
+                          </div>
+                        {% endfor %}
+                      </div>
+                      
+                      <!-- Submit Button Section -->
+                      <div class="submit-section ">
+                        <div class="row">
+                          <div class="col-12 text-center">
+                            <button type="submit" class="btn bg-gradient-success btn-lg pulse-btn me-3">
+                              <i class="material-icons opacity-10 me-2">add_circle</i>
+                              Create Delivery Agent
+                              <span class="btn-ripple"></span>
+                            </button>
+                            <a href="{% url 'home' %}" class="btn btn-outline-secondary btn-lg">
+                              <i class="material-icons opacity-10 me-2">arrow_back</i>
+                              Cancel
+                            </a>
+                          </div>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Enhanced Styling -->
+<style>
+  .form-card {
+    border-radius: 1.5rem !important;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  }
+
+  .section-header {
+    position: relative;
+    margin-bottom: 2rem;
+  }
+
+  .section-title {
+    color: #4a5568;
+    font-weight: 600;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+
+  .section-title i {
+    color: #667eea;
+    font-size: 1.2rem;
+  }
+
+  .section-divider {
+    height: 2px;
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 50%, transparent 100%);
+    border-radius: 1px;
+    margin-top: 0.5rem;
+  }
+
+  /* Enhanced Floating Label Styles */
+  .floating-label-group {
+    position: relative;
+    margin-bottom: 1.5rem;
+  }
+
+  .custom-floating {
+    position: relative;
+    width: 100%;
+  }
+
+  .floating-input {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.9) !important;
+    border: 2px solid #e2e8f0 !important;
+    border-radius: 0.75rem !important;
+    padding: 1.25rem 3rem 0.75rem 1rem !important;
+    font-size: 0.95rem !important;
+    font-weight: 400 !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    backdrop-filter: blur(10px);
+    min-height: 58px !important;
+    outline: none !important;
+  }
+
+  .floating-input:focus {
+    border-color: #667eea !important;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1) !important;
+    background: rgba(255, 255, 255, 0.95) !important;
+  }
+
+  .floating-label {
+    position: absolute;
+    top: 50%;
+    left: 1rem;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.9);
+    color: #718096 !important;
+    font-weight: 500 !important;
+    padding: 0 0.5rem !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    pointer-events: none;
+    font-size: 0.95rem;
+    z-index: 2;
+  }
+
+  /* Active/Focused/Filled state for floating label */
+  .custom-floating.active .floating-label,
+  .floating-input:focus + .floating-label,
+  .floating-input:not(:placeholder-shown) + .floating-label,
+  .floating-input[value]:not([value=""]) + .floating-label {
+    top: 0;
+    left: 0.75rem;
+    transform: translateY(-50%) scale(0.85);
+    color: #667eea !important;
+    background: white;
+    z-index: 3;
+  }
+
+  .required-asterisk {
+    color: #f56565;
+    font-weight: bold;
+    margin-left: 2px;
+  }
+
+  /* Field Icons */
+  .field-icon {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #a0aec0;
+    transition: all 0.3s ease;
+    z-index: 5;
+    pointer-events: none;
+  }
+
+  .floating-input:focus ~ .field-icon {
+    color: #667eea;
+  }
+
+  /* Error Styling */
+  .floating-input.is-invalid,
+  .floating-input:invalid {
+    border-color: #f56565 !important;
+    background: rgba(254, 226, 226, 0.5) !important;
+  }
+
+  .invalid-feedback {
+    display: flex;
+    align-items: flex-start;
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    background: rgba(254, 226, 226, 0.8);
+    border-radius: 0.5rem;
+    border-left: 3px solid #f56565;
+  }
+
+  .error-icon {
+    color: #f56565;
+    font-size: 1rem;
+    margin-right: 0.5rem;
+    margin-top: 0.1rem;
+  }
+
+  .error-text {
+    color: #c53030;
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+
+  /* Success Styling */
+  .floating-input:valid:not(:placeholder-shown) {
+    border-color: #48bb78 !important;
+  }
+
+  .valid-feedback {
+    display: flex;
+    align-items: center;
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    background: rgba(16, 185, 129, 0.1);
+    border-radius: 0.5rem;
+    border-left: 3px solid #10b981;
+    color: #047857;
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+
+  /* Help Text */
+  .help-text {
+    display: flex;
+    align-items: center;
+    margin-top: 0.5rem;
+    color: #718096;
+    font-size: 0.875rem;
+  }
+
+  .help-icon {
+    font-size: 1rem;
+    margin-right: 0.5rem;
+    color: #a0aec0;
+  }
+
+  /* Background Gradients */
+  .bg-gradient-primary {
+    background: linear-gradient(310deg, #667eea 0%, #764ba2 100%) !important;
+  }
+
+  .bg-gradient-warning {
+    background: linear-gradient(310deg, #ff8a00 0%, #e52e71 100%) !important;
+  }
+
+  .bg-gradient-success {
+    background: linear-gradient(310deg, #17ad37 0%, #98ec2d 100%) !important;
+  }
+
+  /* Enhanced Button Styles */
+  .pulse-btn {
+    position: relative;
+    overflow: hidden;
+    animation: pulse 3s infinite;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 0.75rem 2rem !important;
+    font-weight: 600 !important;
+    border-radius: 0.75rem !important;
+    text-transform: none !important;
+    font-size: 1rem !important;
+  }
+
+  .pulse-btn:hover {
+    animation: none;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(23, 173, 55, 0.3);
+  }
+
+  .pulse-btn:active {
+    transform: translateY(0);
+  }
+
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(23, 173, 55, 0.7); }
+    70% { box-shadow: 0 0 0 15px rgba(23, 173, 55, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(23, 173, 55, 0); }
+  }
+
+  /* Button Ripple Effect */
+  .btn-ripple {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+  }
+
+  .pulse-btn:active .btn-ripple {
+    width: 300px;
+    height: 300px;
+  }
+
+  /* Submit Section */
+  .submit-section {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+    border-radius: 1rem;
+    padding: 2rem;
+  }
+
+  /* Select Field Styling */
+  .form-select.floating-input {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23667eea' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m1 6 7 7 7-7'/%3e%3c/svg%3e") !important;
+    background-position: right 1rem center !important;
+    padding-right: 3rem !important;
+  }
+
+  /* Textarea Styling */
+  .floating-input[rows] {
+    min-height: 120px !important;
+    resize: vertical;
+    padding-top: 1.5rem !important;
+  }
+
+  /* Form Check Styling */
+  .form-check {
+    padding-left: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .form-check-input {
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-top: 0.125rem;
+    margin-left: -1.5rem;
+    border: 2px solid #d1d5db;
+    border-radius: 0.375rem;
+  }
+
+  .form-check-input:checked {
+    background-color: #667eea;
+    border-color: #667eea;
+  }
+
+  .form-check-label {
+    font-weight: 500;
+    color: #374151;
+    margin-left: 0.5rem;
+  }
+
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .floating-label-group .col-lg-6 {
+      margin-bottom: 1rem;
+    }
+    
+    .card-body {
+      padding: 2rem !important;
+    }
+    
+    .pulse-btn {
+      width: 100%;
+      margin-bottom: 1rem !important;
+    }
+    
+    .submit-section .btn {
+      width: 100%;
+      margin-bottom: 0.5rem;
+    }
+  }
+
+  /* Animation for invalid fields */
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+    20%, 40%, 60%, 80% { transform: translateX(5px); }
+  }
+
+  .btn-loading {
+    pointer-events: none;
+    opacity: 0.6;
+  }
+
+  .btn-loading::after {
+    content: "";
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    margin: auto;
+    border: 2px solid transparent;
+    border-top-color: #ffffff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+</style>
+
+<script>
+  // Enhanced Form Validation and Interactions
+  (function() {
+    'use strict';
+    
+    window.addEventListener('load', function() {
+      // Initialize floating labels for pre-filled fields
+      function initializeFloatingLabels() {
+        const customFloatings = document.querySelectorAll('.custom-floating');
+        
+        customFloatings.forEach(function(container) {
+          const input = container.querySelector('.floating-input');
+          if (input && (input.value !== '' || input.hasAttribute('value'))) {
+            container.classList.add('active');
+          }
+        });
+      }
+      
+      // Form validation
+      var forms = document.getElementsByClassName('needs-validation');
+      var validation = Array.prototype.filter.call(forms, function(form) {
+        form.addEventListener('submit', function(event) {
+          if (form.checkValidity() === false) {
+            event.preventDefault();
+            event.stopPropagation();
+            
+            // Add shake animation to invalid fields
+            const invalidFields = form.querySelectorAll(':invalid');
+            invalidFields.forEach(field => {
+              field.closest('.floating-label-group').style.animation = 'shake 0.5s ease-in-out';
+              setTimeout(() => {
+                field.closest('.floating-label-group').style.animation = '';
+              }, 500);
+            });
+          } else {
+            // Add loading state to submit button
+            const submitBtn = form.querySelector('button[type="submit"]');
+            submitBtn.classList.add('btn-loading');
+            submitBtn.disabled = true;
+          }
+          form.classList.add('was-validated');
+        }, false);
+      });
+      
+      // Enhanced form interactions
+      const formControls = document.querySelectorAll('.floating-input');
+      
+      formControls.forEach(function(control) {
+        const container = control.closest('.custom-floating');
+        
+        // Focus events
+        control.addEventListener('focus', function() {
+          if (container) {
+            container.classList.add('active');
+          }
+          const group = this.closest('.floating-label-group');
+          if (group) {
+            group.classList.add('focused');
+          }
+        });
+        
+        // Blur events
+        control.addEventListener('blur', function() {
+          if (container && this.value === '') {
+            container.classList.remove('active');
+          }
+          const group = this.closest('.floating-label-group');
+          if (group) {
+            group.classList.remove('focused');
+          }
+          
+          // Validate on blur
+          if (this.checkValidity()) {
+            this.classList.remove('is-invalid');
+            this.classList.add('is-valid');
+          } else if (this.value !== '') {
+            this.classList.remove('is-valid');
+            this.classList.add('is-invalid');
+          }
+        });
+        
+        // Input events
+        control.addEventListener('input', function() {
+          if (container) {
+            if (this.value !== '') {
+              container.classList.add('active');
+            } else {
+              container.classList.remove('active');
+            }
+          }
+          
+          // Real-time validation
+          if (this.value !== '') {
+            if (this.checkValidity()) {
+              this.classList.remove('is-invalid');
+              this.classList.add('is-valid');
+            } else {
+              this.classList.remove('is-valid');
+              this.classList.add('is-invalid');
+            }
+          } else {
+            this.classList.remove('is-valid', 'is-invalid');
+          }
+        });
+        
+        // Change event for select fields
+        control.addEventListener('change', function() {
+          if (container) {
+            if (this.value !== '') {
+              container.classList.add('active');
+            } else {
+              container.classList.remove('active');
+            }
+          }
+        });
+      });
+      
+      // Initialize floating labels on page load
+      initializeFloatingLabels();
+    });
+  })();
+</script>
+{% endblock %}
